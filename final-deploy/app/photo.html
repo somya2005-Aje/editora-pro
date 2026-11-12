@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Editora Pro — Photo Editor</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="photo.css">
+</head>
+<body>
+<div id="photoApp">
+  <!-- ============ TOP BAR ============ -->
+  <header id="photoTopbar">
+    <a id="btnHomeLink" href="./index.html" title="Back to the video editor home">← Back to Home</a>
+    <a id="btnProjectsLink" href="./index.html#projects" title="Projects library — open, rename, duplicate, delete, backup">Projects</a>
+    <a id="btnExportsLink" href="./index.html#export" title="Export Center — queue and export history">Exports</a>
+    <span class="brand"><b>Editora <span>Pro</span></b> <em>Photo Editor</em></span>
+    <input id="projectName" value="Untitled Photo" title="Project name" spellcheck="false">
+    <span id="autosaveText" class="autosave" title="Projects auto-save locally in your browser">● Auto saved —</span>
+    <div class="sp"></div>
+    <button id="btnUndo" title="Undo (Ctrl+Z)"><span class="ico" data-ic="undo"></span> Undo</button>
+    <button id="btnRedo" title="Redo (Ctrl+Y)"><span class="ico" data-ic="redo"></span> Redo</button>
+    <button id="btnNewPhoto" title="Start a new blank photo">+ New</button>
+    <button id="btnOpenImageTop" title="Open an image from your device (Ctrl+O)"><span class="ico" data-ic="folder"></span> Open Image</button>
+    <button id="btnSavePhoto" title="Save project to this browser (Ctrl+S)"><span class="ico" data-ic="save"></span> Save</button>
+    <span class="free-badge" title="Editora Pro is 100% free — no ads, no watermark, no paid plans">FREE • No Watermark</span>
+    <button id="btnDrawerLayers" class="mobile-only" title="Show layers panel"><span class="ico" data-ic="layers"></span> Layers</button>
+    <button id="btnDrawerAdjust" class="mobile-only" title="Show adjustments panel"><span class="ico" data-ic="sliders"></span> Adjust</button>
+    <button id="btnThemePhoto" title="Toggle dark / light theme" aria-label="Toggle theme"><span class="ico" data-ic="moon"></span></button>
+    <button id="btnOverflow" class="mobile-only" title="More actions" aria-label="More actions"><span class="ico" data-ic="more-horizontal"></span></button>
+    <button id="btnExportTop" class="export-btn" title="Export the finished photo"><span class="ico" data-ic="download"></span> Export</button>
+  </header>
+
+  <!-- ============ MENU BAR (File / Edit / Image / Layer / Select / Filter / View / Help) ============ -->
+  <nav id="photoMenuBar" aria-label="Photo editor menus">
+    <div class="menu">
+      <button class="menu-btn" data-menu="file" aria-haspopup="true">File</button>
+      <div class="menu-list" id="menuFile" hidden>
+        <button class="menu-item" data-act="open">Open Image… <span class="kbd">Ctrl+O</span></button>
+        <button class="menu-item" data-act="newBlank">New Blank Canvas</button>
+        <button class="menu-item" data-act="newPreset">New from Design Preset…</button>
+        <hr>
+        <button class="menu-item" data-act="save">Save Project <span class="kbd">Ctrl+S</span></button>
+        <button class="menu-item" data-act="openSaved">Open Saved Project…</button>
+        <button class="menu-item" data-act="backup">Download Project Backup (.json)</button>
+        <button class="menu-item" data-act="restore">Restore Backup (.json)…</button>
+        <hr>
+        <button class="menu-item" data-act="export">Export Photo…</button>
+        <button class="menu-item" data-act="closeProject">Close Project</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="edit" aria-haspopup="true">Edit</button>
+      <div class="menu-list" id="menuEdit" hidden>
+        <button class="menu-item" data-act="undo">Undo <span class="kbd">Ctrl+Z</span></button>
+        <button class="menu-item" data-act="redo">Redo <span class="kbd">Ctrl+Y</span></button>
+        <hr>
+        <button class="menu-item" data-act="copyLayer">Copy Layer</button>
+        <button class="menu-item" data-act="pasteLayer">Paste Layer</button>
+        <button class="menu-item" data-act="dupLayer">Duplicate Layer</button>
+        <hr>
+        <button class="menu-item" data-act="selectAll">Select All</button>
+        <button class="menu-item" data-act="deselect">Deselect</button>
+        <button class="menu-item" data-act="invertSel">Invert Selection</button>
+        <button class="menu-item" data-act="fillSel">Fill Selection with Brush Color</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="image" aria-haspopup="true">Image</button>
+      <div class="menu-list" id="menuImage" hidden>
+        <button class="menu-item" data-act="rotateL">Rotate 90° Left</button>
+        <button class="menu-item" data-act="rotateR">Rotate 90° Right</button>
+        <button class="menu-item" data-act="flipH">Flip Horizontal</button>
+        <button class="menu-item" data-act="flipV">Flip Vertical</button>
+        <hr>
+        <button class="menu-item" data-act="resize">Resize Image…</button>
+        <button class="menu-item" data-act="straighten">Straighten…</button>
+        <button class="menu-item" data-act="cropToSel">Crop to Selection</button>
+        <hr>
+        <button class="menu-item" data-act="imgInfo">Image Size &amp; Info</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="layer" aria-haspopup="true">Layer</button>
+      <div class="menu-list" id="menuLayer" hidden>
+        <button class="menu-item" data-act="layerNew">New Layer</button>
+        <button class="menu-item" data-act="dupLayer">Duplicate Layer</button>
+        <button class="menu-item" data-act="layerDelete">Delete Layer</button>
+        <button class="menu-item" data-act="layerRename">Rename Layer…</button>
+        <hr>
+        <button class="menu-item" data-act="layerUp">Move Layer Up</button>
+        <button class="menu-item" data-act="layerDown">Move Layer Down</button>
+        <hr>
+        <button class="menu-item" data-act="layerGroup">Group with Layer Below</button>
+        <button class="menu-item" data-act="layerUngroup">Ungroup</button>
+        <button class="menu-item" data-act="layerMerge">Merge Down</button>
+        <button class="menu-item" data-act="layerFlatten">Flatten Image</button>
+        <hr>
+        <button class="menu-item" data-act="layerClip">Clip to Layer Below</button>
+        <button class="menu-item" data-act="layerAdj">New Adjustment Layer</button>
+        <button class="menu-item" data-act="layerMask">Add Layer Mask</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="select" aria-haspopup="true">Select</button>
+      <div class="menu-list" id="menuSelect" hidden>
+        <button class="menu-item" data-act="tool:rectsel">Rectangular Selection <span class="kbd">M</span></button>
+        <button class="menu-item" data-act="tool:ellipsesel">Elliptical Selection</button>
+        <button class="menu-item" data-act="tool:lasso">Lasso <span class="kbd">L</span></button>
+        <button class="menu-item" data-act="tool:polylasso">Polygon Lasso</button>
+        <button class="menu-item" data-act="tool:quicksel">Quick Selection</button>
+        <button class="menu-item" data-act="tool:wand">Magic Wand</button>
+        <button class="menu-item" data-act="tool:colorrange">Color Range</button>
+        <hr>
+        <button class="menu-item" data-act="selectAll">Select All</button>
+        <button class="menu-item" data-act="deselect">Deselect</button>
+        <button class="menu-item" data-act="invertSel">Invert Selection</button>
+        <button class="menu-item" data-act="featherSel">Feather Selection…</button>
+        <button class="menu-item" data-act="expandSel">Expand Selection</button>
+        <button class="menu-item" data-act="contractSel">Contract Selection</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="filter" aria-haspopup="true">Filter</button>
+      <div class="menu-list" id="menuFilter" hidden>
+        <!-- filled by JS from FILTER_PRESETS -->
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="view" aria-haspopup="true">View</button>
+      <div class="menu-list" id="menuView" hidden>
+        <button class="menu-item" data-act="zoomIn">Zoom In <span class="kbd">+</span></button>
+        <button class="menu-item" data-act="zoomOut">Zoom Out <span class="kbd">−</span></button>
+        <button class="menu-item" data-act="zoomFit">Fit to Screen</button>
+        <button class="menu-item" data-act="zoom100">Zoom 100%</button>
+        <hr>
+        <button class="menu-item" data-act="toggleTheme">Toggle Dark / Light Theme</button>
+        <button class="menu-item" data-act="toggleLeft">Show / Hide Tool Panel</button>
+        <button class="menu-item" data-act="toggleRight">Show / Hide Right Panel</button>
+        <hr>
+        <button class="menu-item" data-act="rotateView" title="Rotate the view 90° clockwise (view only — the image itself is unchanged; rotate back to 0° before painting)">Rotate View</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button class="menu-btn" data-menu="help" aria-haspopup="true">Help</button>
+      <div class="menu-list" id="menuHelp" hidden>
+        <button class="menu-item" data-act="shortcuts">Keyboard Shortcuts…</button>
+        <button class="menu-item" data-act="about">About Editora Pro</button>
+      </div>
+    </div>
+    <div class="sp"></div>
+    <span class="menu-hint">Tip: press a tool key (V B E C M L T U I G) to switch tools</span>
+  </nav>
+
+  <!-- overflow menu (mobile top bar) -->
+  <div id="overflowMenu" class="menu-list" hidden>
+    <button class="menu-item" data-act="newBlank">New Blank Canvas</button>
+    <button class="menu-item" data-act="open">Open Image…</button>
+    <button class="menu-item" data-act="newPreset">New from Design Preset…</button>
+    <button class="menu-item" data-act="toggleTheme">Toggle Dark / Light Theme</button>
+    <button class="menu-item" data-act="shortcuts">Keyboard Shortcuts…</button>
+    <button class="menu-item" data-act="about">About Editora Pro</button>
+  </div>
+
+  <div id="photoMain">
+    <!-- ============ LEFT: VERTICAL LABELLED TOOLBAR ============ -->
+    <aside id="photoLeft">
+      <div id="toolBar" role="toolbar" aria-label="Photo tools">
+        <button id="toolMove" class="tool-btn on" data-tool="move" title="Move / select layer (V)"><span class="ico" data-ic="move" data-ic-size="20"></span><span>Move</span></button>
+        <button id="toolSelection" class="tool-btn" data-tool="rectsel" data-group="selection" title="Selection tools — click to open the selection flyout (M)"><span class="ico" data-ic="square" data-ic-size="20"></span><span>Selection</span><span class="ico fly" data-ic="chevron-right" data-ic-size="12"></span></button>
+        <button id="toolCrop" class="tool-btn" data-tool="crop" title="Crop — drag a rectangle, then Apply Crop (C)"><span class="ico" data-ic="crop" data-ic-size="20"></span><span>Crop</span></button>
+        <button id="toolBrush" class="tool-btn" data-tool="brush" data-group="brush" title="Brush tools — click to open the brush flyout (B)"><span class="ico" data-ic="brush" data-ic-size="20"></span><span>Brush</span><span class="ico fly" data-ic="chevron-right" data-ic-size="12"></span></button>
+        <button id="toolEraser" class="tool-btn" data-tool="eraser" title="Eraser (E)"><span class="ico" data-ic="eraser" data-ic-size="20"></span><span>Eraser</span></button>
+        <button id="toolCloneHeal" class="tool-btn" data-tool="clone" data-group="clone" title="Clone / healing tools — click to open the retouch flyout"><span class="ico" data-ic="stamp" data-ic-size="20"></span><span>Clone/Heal</span><span class="ico fly" data-ic="chevron-right" data-ic-size="12"></span></button>
+        <button id="toolText" class="tool-btn" data-tool="text" title="Text — click the canvas to place text (T)"><span class="ico" data-ic="type" data-ic-size="20"></span><span>Text</span></button>
+        <button id="toolShape" class="tool-btn" data-tool="shape" title="Shapes — drag on the canvas (U)"><span class="ico" data-ic="square" data-ic-size="20"></span><span>Shape</span></button>
+        <button id="toolGradient" class="tool-btn" data-tool="gradient" title="Gradient — drag on the canvas to paint a gradient layer"><span class="ico" data-ic="gradient" data-ic-size="20"></span><span>Gradient</span></button>
+        <button id="toolHand" class="tool-btn" data-tool="hand" title="Hand — drag to pan the canvas (H)"><span class="ico" data-ic="hand" data-ic-size="20"></span><span>Hand</span></button>
+        <button id="toolZoom" class="tool-btn" data-tool="zoom" title="Zoom — click to zoom in, Alt-click to zoom out (Z)"><span class="ico" data-ic="zoom-in" data-ic-size="20"></span><span>Zoom</span></button>
+      </div>
+
+      <!-- tool flyouts (one open at a time) -->
+      <div id="popSelection" class="tool-pop" hidden>
+        <p class="pop-title">Selection tools</p>
+        <button class="tool-btn" data-tool="rectsel" title="Rectangular selection (M)"><span class="ico" data-ic="square" data-ic-size="20"></span><span>Rect Sel</span></button>
+        <button class="tool-btn" data-tool="ellipsesel" title="Ellipse selection — drag an ellipse"><span class="ico" data-ic="circle" data-ic-size="20"></span><span>Ellipse</span></button>
+        <button class="tool-btn" data-tool="lasso" title="Lasso — freehand selection (L)"><span class="ico" data-ic="lasso" data-ic-size="20"></span><span>Lasso</span></button>
+        <button class="tool-btn" data-tool="polylasso" title="Polygon lasso — tap to place points, double-tap or Enter to close"><span class="ico" data-ic="shapes" data-ic-size="20"></span><span>Poly Lasso</span></button>
+        <button class="tool-btn" data-tool="quicksel" title="Quick selection — tap/drag to grow a similar-color region"><span class="ico" data-ic="wand" data-ic-size="20"></span><span>Quick Sel</span></button>
+        <button class="tool-btn" data-tool="wand" title="Magic wand — tap to select a connected similar-color area"><span class="ico" data-ic="sparkles" data-ic-size="20"></span><span>Wand</span></button>
+        <button class="tool-btn" data-tool="colorrange" title="Color range — tap a color to select all matching pixels in the image"><span class="ico" data-ic="palette" data-ic-size="20"></span><span>Color Range</span></button>
+      </div>
+      <div id="popBrush" class="tool-pop" hidden>
+        <p class="pop-title">Brush tools</p>
+        <button class="tool-btn" data-tool="brush" title="Brush — paint on the active layer (B)"><span class="ico" data-ic="brush" data-ic-size="20"></span><span>Brush</span></button>
+        <button class="tool-btn" data-tool="pencil" title="Pencil — hard 1px strokes"><span class="ico" data-ic="pencil" data-ic-size="20"></span><span>Pencil</span></button>
+        <button class="tool-btn" data-tool="airbrush" title="Airbrush — soft spray, flow controls how much paint lands"><span class="ico" data-ic="wind" data-ic-size="20"></span><span>Airbrush</span></button>
+        <button class="tool-btn" data-tool="blurbrush" title="Blur brush — paint to soften an area"><span class="ico" data-ic="blend" data-ic-size="20"></span><span>Blur Brush</span></button>
+        <button class="tool-btn" data-tool="sharpenbrush" title="Sharpen brush — paint to sharpen an area"><span class="ico" data-ic="zoom-in" data-ic-size="20"></span><span>Sharpen</span></button>
+        <button class="tool-btn" data-tool="smudge" title="Smudge brush — drag to smear pixels like wet paint"><span class="ico" data-ic="hand" data-ic-size="20"></span><span>Smudge</span></button>
+        <button class="tool-btn" data-tool="dodge" title="Dodge — paint to lighten"><span class="ico" data-ic="sun-medium" data-ic-size="20"></span><span>Dodge</span></button>
+        <button class="tool-btn" data-tool="burn" title="Burn — paint to darken"><span class="ico" data-ic="moon" data-ic-size="20"></span><span>Burn</span></button>
+        <button class="tool-btn" data-tool="sponge" title="Sponge — paint to raise/lower saturation"><span class="ico" data-ic="droplet" data-ic-size="20"></span><span>Sponge</span></button>
+      </div>
+      <div id="popClone" class="tool-pop" hidden>
+        <p class="pop-title">Clone / healing tools</p>
+        <button class="tool-btn" data-tool="clone" title="Clone stamp — Alt-click to sample, then paint"><span class="ico" data-ic="stamp" data-ic-size="20"></span><span>Clone</span></button>
+        <button class="tool-btn" data-tool="healing" title="Healing (feathered clone) — Alt-click to sample, then paint over blemishes"><span class="ico" data-ic="bandage" data-ic-size="20"></span><span>Heal</span></button>
+        <button class="tool-btn" data-tool="spotheal" title="Spot healing — tap a blemish once; it is patched from nearby pixels (feathered clone, not content-aware)"><span class="ico" data-ic="plus" data-ic-size="20"></span><span>Spot Heal</span></button>
+        <button class="tool-btn" data-tool="redeye" title="Red-eye correction — tap a red eye to remove the red"><span class="ico" data-ic="eye" data-ic-size="20"></span><span>Red-eye</span></button>
+      </div>
+
+      <div id="zoomRow">
+        <button id="zoomOut" title="Zoom out">−</button>
+        <input id="zoomRange" type="range" min="10" max="400" value="100" title="Zoom">
+        <button id="zoomIn" title="Zoom in">＋</button>
+        <button id="zoomFit" title="Fit image to screen">Fit</button>
+        <span id="zoomLabel">100%</span>
+      </div>
+
+      <div id="colorRow">
+        <button id="fgSwatch" class="color-swatch fg" title="Foreground color — click to pick (used by Brush, Text, Gradient)"><input id="brushColor" type="color" value="#ff3366" title="Foreground color"></button>
+        <button id="bgSwatch" class="color-swatch bg" title="Background color — used by Gradient as the second color"><input id="brushBgColor" type="color" value="#06b6d4" title="Background color"></button>
+        <button id="btnSwapColors" title="Swap foreground / background colors (X)"><span class="ico" data-ic="refresh-cw"></span></button>
+        <span class="color-label">FG / BG</span>
+      </div>
+      <p class="hint" id="toolGroupHint">Brush, Eraser and Clone share size / hardness / opacity in the Properties tab.</p>
+      <button id="btnToolSettings" class="mobile-only" title="Open the settings for the current tool">Tool settings</button>
+      <button id="btnCloseLeft" class="mobile-only" title="Close the tools panel">Close tools</button>
+    </aside>
+
+    <!-- ============ CENTER: CANVAS ============ -->
+    <main id="photoCenter">
+      <div id="photoStage">
+        <canvas id="photoCanvas" width="1200" height="800"></canvas>
+        <div id="emptyState">
+          <p class="big"><span class="ico" data-ic="image" data-ic-size="40"></span> No image yet</p>
+          <p>Open a photo to start editing — every tool here edits real pixels.</p>
+          <button id="btnOpenImage"><span class="ico" data-ic="folder"></span> Open image</button>
+          <button id="btnBlankCanvas" class="secondary"><span class="ico" data-ic="square"></span> Start with a blank canvas</button>
+          <div id="recentWrap">
+            <p class="hint">Recent Projects</p>
+            <div id="recentList"><p class="hint">No recent projects yet.</p></div>
+          </div>
+          <p class="hint">Click anywhere here, or press Ctrl+O, to open an image.<br>Or drag &amp; drop a JPG, PNG, WebP, GIF or BMP file anywhere on this page.<br>Opening a second image asks: replace, or add as a new layer.</p>
+        </div>
+        <div id="dropHint" hidden>Drop image to open</div>
+      </div>
+      <div id="statusBar">
+        <span id="photoHint">No image open.</span>
+        <span id="docInfo"></span>
+        <span id="colorProfile" title="Working color profile of the canvas"></span>
+        <span id="toolHint">Tool: Move</span>
+        <span class="status-zoom"><button id="zoomOut2" title="Zoom out">−</button><button id="zoomIn2" title="Zoom in">＋</button><button id="zoomFit2" title="Fit image to screen">Fit</button><button id="zoom100" title="Zoom to 100%">100%</button><span id="statusZoom">100%</span></span>
+      </div>
+    </main>
+
+    <!-- ============ RIGHT: TABBED PANELS ============ -->
+    <aside id="photoRight">
+      <div id="rightTabs" role="tablist" aria-label="Photo panels">
+        <button id="tabBtnLayers" class="rtab on" data-tab="layers" role="tab" title="Layers panel"><span class="ico" data-ic="layers"></span>Layers</button>
+        <button id="tabBtnProperties" class="rtab" data-tab="properties" role="tab" title="Properties for the active tool or layer"><span class="ico" data-ic="sliders"></span>Properties</button>
+        <button id="tabBtnAdjustments" class="rtab" data-tab="adjustments" role="tab" title="Adjustments, curves, HSL and filters"><span class="ico" data-ic="contrast"></span>Adjust</button>
+        <button id="tabBtnHistory" class="rtab" data-tab="history" role="tab" title="History — named actions, click to jump back"><span class="ico" data-ic="clock"></span>History</button>
+        <button id="btnCloseRight" class="rtab-close" title="Close panel" aria-label="Close panel"><span class="ico" data-ic="x"></span></button>
+      </div>
+
+      <div id="tabLayers" class="rtab-panel">
+      <section id="layersSection">
+        <h3>Layers</h3>
+        <div class="btn-row">
+          <button id="btnAddLayer" title="Add a blank paint layer">+ Layer</button>
+          <button id="btnDupLayer" title="Duplicate selected layer"><span class="ico" data-ic="copy"></span> Dup</button>
+          <button id="btnDelLayer" title="Delete selected layer"><span class="ico" data-ic="trash"></span> Del</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnLayerUp" title="Move layer up">↑ Up</button>
+          <button id="btnLayerDown" title="Move layer down">↓ Down</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnAddGroup" title="New layer group (folder) — selected layers go inside"><span class="ico" data-ic="folder-plus"></span> Group</button>
+          <button id="btnUngroup" title="Ungroup the selected group"><span class="ico" data-ic="folder"></span> Ungroup</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnMergeDown" title="Merge the active layer into the layer below it"><span class="ico" data-ic="arrow-down"></span> Merge down</button>
+          <button id="btnFlatten" title="Flatten all layers into one"><span class="ico" data-ic="layers"></span> Flatten</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnClipMask" title="Clip this layer to the layer below (its pixels only show where the layer below is opaque)"><span class="ico" data-ic="scissors"></span> Clip to below</button>
+          <button id="btnAdjLayer" title="Add an adjustment layer — applies its adjustments to all layers below without changing them"><span class="ico" data-ic="sliders"></span> Adj. layer</button>
+        </div>
+        <div id="layerList"></div>
+        <label>Layer opacity <input id="layerOpacity" type="range" min="0" max="100" value="100"><span id="layerOpacityVal">100%</span></label>
+        <label>Blend mode <select id="layerBlend">
+          <option value="source-over">Normal</option><option value="multiply">Multiply</option>
+          <option value="screen">Screen</option><option value="overlay">Overlay</option>
+          <option value="soft-light">Soft light</option><option value="hard-light">Hard light</option>
+          <option value="darken">Darken</option><option value="lighten">Lighten</option>
+          <option value="color-dodge">Color dodge</option><option value="color-burn">Color burn</option>
+          <option value="difference">Difference</option><option value="exclusion">Exclusion</option>
+          <option value="hue">Hue</option><option value="saturation">Saturation</option>
+          <option value="color">Color</option><option value="luminosity">Luminosity</option>
+        </select></label>
+        <div class="btn-row">
+          <button id="btnAddMask" title="Add a mask to the selected layer">+ Mask</button>
+          <button id="btnEditMask" title="Paint on the layer mask with the brush"><span class="ico" data-ic="blend"></span> Edit mask</button>
+        </div>
+        <div class="btn-row">
+          <button id="btnApplyMask" title="Bake the mask into the layer permanently">Apply mask</button>
+          <button id="btnDeleteMask" title="Remove the mask (restores hidden pixels)">Delete mask</button>
+        </div>
+        <p id="maskStatus" class="hint">No mask on the selected layer.</p>
+      </section>
+      </div>
+
+      <div id="tabProperties" class="rtab-panel" hidden>
+      <!-- Tool options (shown per active tool) -->
+      <div id="toolOptions">
+        <div id="optBrush" class="opt-group">
+          <h3>Brush</h3>
+          <label>Size <input id="brushSize" type="range" min="1" max="200" value="24"><span id="brushSizeVal">24px</span></label>
+          <label>Opacity <input id="brushOpacity" type="range" min="1" max="100" value="100"><span id="brushOpacityVal">100%</span></label>
+          <label>Hardness <input id="brushHardness" type="range" min="0" max="100" value="80"><span id="brushHardnessVal">80%</span></label>
+          <label>Spacing <input id="brushSpacing" type="range" min="1" max="200" value="25"><span id="brushSpacingVal">25%</span></label>
+          <label>Flow <input id="brushFlow" type="range" min="1" max="100" value="60"><span id="brushFlowVal">60%</span></label>
+          <label>Strength <input id="brushStrength" type="range" min="1" max="100" value="50"><span id="brushStrengthVal">50%</span></label>
+          <p class="hint">Paints on the active layer. Eraser uses the same size. Spacing = distance between dabs as % of brush size (25% = smooth stroke). Flow = airbrush spray amount; Strength = blur/sharpen/smudge/dodge/burn/sponge power.</p>
+        </div>
+
+        <div id="optCrop" class="opt-group" hidden>
+          <h3>Crop &amp; Resize</h3>
+          <label>Ratio <select id="cropRatio">
+            <option value="free">Free</option><option value="1">1:1</option><option value="1.333">4:3</option>
+            <option value="1.778">16:9</option><option value="0.5625">9:16</option>
+            <option value="1280x720">YouTube thumbnail 1280×720</option>
+            <option value="1080x1080">IG post 1080×1080</option>
+            <option value="1080x1920">Story 1080×1920</option>
+          </select></label>
+          <p class="hint">Drag on the canvas to draw the crop box — drag its corner/edge handles to resize it — then:</p>
+          <div class="btn-row"><button id="btnApplyCrop"><span class="ico" data-ic="check"></span> Apply Crop</button><button id="btnCancelCrop"><span class="ico" data-ic="x"></span> Cancel</button></div>
+          <label>Resize W <input id="resizeW" type="number" min="1" max="8000" value="1280"></label>
+          <label>Resize H <input id="resizeH" type="number" min="1" max="8000" value="720"></label>
+          <div class="btn-row"><button id="btnApplyResize">Resize image</button></div>
+          <div class="btn-row">
+            <button id="btnRotateL" title="Rotate 90° left"><span class="ico" data-ic="rotate-ccw"></span> 90°</button>
+            <button id="btnRotateR" title="Rotate 90° right"><span class="ico" data-ic="rotate-cw"></span> 90°</button>
+            <button id="btnFlipH" title="Flip horizontally"><span class="ico" data-ic="flip-h"></span> Flip</button>
+            <button id="btnFlipV" title="Flip vertically"><span class="ico" data-ic="flip-v"></span> Flip</button>
+          </div>
+          <label>Straighten <input id="straighten" type="range" min="-15" max="15" step="0.5" value="0"><span id="straightenVal">0°</span></label>
+          <div class="btn-row"><button id="btnApplyStraighten">Apply straighten</button><button id="btnResetStraighten">Reset</button></div>
+          <p class="hint">Straighten previews live; Apply bakes it into every layer.</p>
+        </div>
+
+        <div id="optSelect" class="opt-group" hidden>
+          <h3>Selection</h3>
+          <label>Feather <input id="selFeather" type="range" min="0" max="50" value="0"><span id="selFeatherVal">0px</span></label>
+          <label>Tolerance <input id="selTolerance" type="range" min="1" max="100" value="25"><span id="selToleranceVal">25</span></label>
+          <label class="chk"><input id="selOnlyAdj" type="checkbox"> Adjustments apply to selection only</label>
+          <div class="btn-row"><button id="btnSelCrop">Crop to selection</button><button id="btnSelDelete">Delete inside</button></div>
+          <div class="btn-row"><button id="btnSelFill">Fill with brush color</button><button id="btnSelInvert">Invert selection</button></div>
+          <div class="btn-row"><button id="btnSelExpand">＋ Expand</button><button id="btnSelContract">－ Contract</button></div>
+          <div class="btn-row"><button id="btnSelDeselect"><span class="ico" data-ic="x"></span> Clear selection</button></div>
+          <p class="hint">Delete clears to transparency on the active layer. Fill uses the brush color. Tolerance is used by Quick Selection, Wand and Color Range. Polygon lasso: tap to place points, double-tap (or Enter) to close.</p>
+          <h3>Refine edges</h3>
+          <label>Expand <input id="refineExpand" type="range" min="0" max="40" value="0"><span id="refineExpandVal">0px</span></label>
+          <label>Contract <input id="refineContract" type="range" min="0" max="40" value="0"><span id="refineContractVal">0px</span></label>
+          <div class="btn-row"><button id="btnRefineApply">Apply refine</button><button id="btnRefineReset">Reset refine</button></div>
+          <h3>Background</h3>
+          <div class="btn-row"><button id="btnBgDelete">Delete background</button><button id="btnBgFillColor">Fill bg with color</button></div>
+          <div class="btn-row"><button id="btnBgFillImage">Fill bg with image…</button></div>
+          <p class="hint">Select the subject first (any selection tool), then Delete background removes everything OUTSIDE the selection to transparency, or fills it with a color / an image.</p>
+        </div>
+
+        <div id="optRetouch" class="opt-group" hidden>
+          <h3>Retouch</h3>
+          <label>Local exposure <input id="localExpAmt" type="range" min="-100" max="100" value="40"><span id="localExpAmtVal">+40</span></label>
+          <label>Sponge mode <select id="spongeMode"><option value="saturate">Saturate ↑</option><option value="desaturate">Desaturate ↓</option></select></label>
+          <h3>Skin tone (uses current selection)</h3>
+          <label>Warmth <input id="skinWarmth" type="range" min="-100" max="100" value="20"><span id="skinWarmthVal">+20</span></label>
+          <label>Smoothing <input id="skinSmooth" type="range" min="0" max="100" value="40"><span id="skinSmoothVal">40</span></label>
+          <div class="btn-row"><button id="btnApplySkin">Apply skin tone</button></div>
+          <h3>Selective color</h3>
+          <div class="btn-row"><button id="btnPickSelColor">Pick a color…</button><span id="selColorSwatch" class="swatch" title="Selected color for selective color">#ff3366</span></div>
+          <label>Hue shift <input id="selColorHue" type="range" min="-180" max="180" value="0"><span id="selColorHueVal">0°</span></label>
+          <label>Saturation <input id="selColorSat" type="range" min="-100" max="100" value="0"><span id="selColorSatVal">0</span></label>
+          <label>Lightness <input id="selColorLight" type="range" min="-100" max="100" value="0"><span id="selColorLightVal">0</span></label>
+          <div class="btn-row"><button id="btnApplySelColor">Apply selective color</button></div>
+          <p class="hint">Skin tone and selective color work inside the current selection (or the whole layer if there is no selection). Red-eye: tap the red eye. Spot heal: tap the blemish once.</p>
+        </div>
+
+        <div id="optTransform" class="opt-group" hidden>
+          <h3>Transform</h3>
+          <p class="hint">Drag the corner handles to scale (Perspective: drag corners to skew). Drag edge handles to shear. Drag the top circle to rotate. Then:</p>
+          <div class="btn-row"><button id="btnApplyTransform"><span class="ico" data-ic="check"></span> Apply</button><button id="btnCancelTransform"><span class="ico" data-ic="x"></span> Cancel</button></div>
+          <p class="hint">Applies to the active layer. Text/shape layers are rasterized first.</p>
+        </div>
+
+        <div id="optClone" class="opt-group" hidden>
+          <h3>Clone / Healing</h3>
+          <p id="cloneStatus" class="hint">No source set. Alt-click (or long-press on touch) on the canvas to sample a source point, then paint.</p>
+          <div class="btn-row"><button id="btnCloneClear">Clear source</button></div>
+          <p class="hint">Healing paints the sampled pixels with a soft feathered edge, so blemishes blend away. This is a feathered clone, not content-aware fill.</p>
+        </div>
+
+        <div id="optText" class="opt-group" hidden>
+          <h3>Text</h3>
+          <label>Text <input id="textInput" type="text" value="" placeholder="Type your text…"></label>
+          <label>Font <select id="textFont">
+            <option value="Arial">Arial</option><option value="Georgia">Georgia</option>
+            <option value="Verdana">Verdana</option><option value="Courier New">Courier New</option>
+            <option value="Impact">Impact</option><option value="Comic Sans MS">Comic Sans</option>
+            <option value="Times New Roman">Times New Roman</option><option value="Trebuchet MS">Trebuchet MS</option>
+          </select></label>
+          <label>Weight <select id="textWeight">
+            <option value="400">Regular</option><option value="700">Bold</option>
+          </select></label>
+          <label>Align <select id="textAlign">
+            <option value="center">Center</option><option value="left">Left</option><option value="right">Right</option>
+          </select></label>
+          <label>Size <input id="textSize" type="range" min="8" max="400" value="56"><span id="textSizeVal">56px</span></label>
+          <label>Color <input id="textColor" type="color" value="#ffffff"></label>
+          <label class="chk"><input id="textOutline" type="checkbox"> Outline <input id="textOutlineColor" type="color" value="#000000"></label>
+          <label class="chk"><input id="textShadow" type="checkbox"> Shadow</label>
+          <label>Letter spacing <input id="textSpacing" type="range" min="0" max="40" value="0"><span id="textSpacingVal">0px</span></label>
+          <label>Line height <input id="textLineHeight" type="range" min="80" max="250" value="120"><span id="textLineHeightVal">120%</span></label>
+          <div class="btn-row"><button id="btnAddText">＋ Add text layer</button></div>
+          <p class="hint">Click the canvas to place the text. Click an existing text layer to select it, then edit here — changes apply live. Double-click a text layer on the canvas to edit its wording.</p>
+        </div>
+
+        <div id="optShape" class="opt-group" hidden>
+          <h3>Shapes</h3>
+          <label>Shape <select id="shapeKind">
+            <option value="rect">Rectangle</option><option value="ellipse">Ellipse</option>
+            <option value="line">Line</option><option value="arrow">Arrow</option>
+            <option value="polygon">Polygon</option>
+          </select></label>
+          <label>Polygon sides <input id="shapeSides" type="range" min="3" max="8" value="5"><span id="shapeSidesVal">5</span></label>
+          <label>Fill <input id="shapeFill" type="color" value="#ff3366"></label>
+          <label>Stroke <input id="shapeStroke" type="color" value="#000000"></label>
+          <label>Stroke width <input id="shapeStrokeW" type="range" min="0" max="40" value="4"><span id="shapeStrokeWVal">4px</span></label>
+          <label>Opacity <input id="shapeOpacity" type="range" min="1" max="100" value="100"><span id="shapeOpacityVal">100%</span></label>
+          <p class="hint">Drag on the canvas to draw the shape. Each shape is its own layer — move or restyle it later.</p>
+        </div>
+
+        <div id="optBucket" class="opt-group" hidden>
+          <h3>Paint bucket</h3>
+          <label>Tolerance <input id="bucketTolerance" type="range" min="0" max="100" value="20"><span id="bucketToleranceVal">20</span></label>
+          <p class="hint">Click the canvas to flood-fill a similar-color area with the brush color. Tolerance 0 = exact color only.</p>
+        </div>
+
+        <div id="optGradient" class="opt-group" hidden>
+          <h3>Gradient</h3>
+          <label>Type <select id="gradKind"><option value="linear">Linear</option><option value="radial">Radial</option></select></label>
+          <label class="chk"><input id="gradFillSel" type="checkbox"> Fill selection on the active layer (instead of a new layer)</label>
+          <p class="hint">Drag on the canvas: the drag direction sets the gradient direction (linear) or its radius (radial). Colors are the foreground → background colors in the left panel. Creates a real gradient layer (or fills the selection).</p>
+        </div>
+
+        <div id="optMask" class="opt-group" hidden>
+          <h3>Layer mask — painting</h3>
+          <label>Paint with <select id="maskPaint"><option value="#000000">Black — hide</option><option value="#ffffff">White — reveal</option></select></label>
+          <p id="maskHint" class="hint">You are painting on the layer mask, not the image. Black hides pixels, white reveals them. Switch back with “Done editing mask”.</p>
+        </div>
+      </div>
+
+      <section id="moreToolsSection">
+        <h3>More tools</h3>
+        <div class="btn-row">
+          <button id="toolPicker" class="tool-btn" data-tool="picker" title="Color picker / eyedropper — click the canvas (I)"><span class="ico" data-ic="eyedropper" data-ic-size="20"></span><span>Picker</span></button>
+          <button id="toolBucket" class="tool-btn" data-tool="bucket" title="Paint bucket — flood fill (G)"><span class="ico" data-ic="paint-bucket" data-ic-size="20"></span><span>Bucket</span></button>
+        </div>
+        <div class="btn-row">
+          <button id="toolTransform" class="tool-btn" data-tool="transform" title="Free transform — drag corners to scale, edge handles to shear, top handle to rotate; Apply to bake"><span class="ico" data-ic="frame" data-ic-size="20"></span><span>Transform</span></button>
+          <button id="toolPerspective" class="tool-btn" data-tool="perspective" title="Perspective — drag the four corners to skew the active layer; Apply to bake"><span class="ico" data-ic="ruler" data-ic-size="20"></span><span>Perspective</span></button>
+        </div>
+        <p class="hint">Picker, Bucket, Transform and Perspective also have keyboard shortcuts (I, G) or live in the Select / Image menus.</p>
+      </section>
+
+      <section id="designSection">
+        <h3>Design studio — new canvas</h3>
+        <div class="preset-grid">
+          <button data-design="1280x720">YouTube thumb 1280×720</button>
+          <button data-design="1080x1080">IG post 1080×1080</button>
+          <button data-design="1080x1920">IG story 1080×1920</button>
+          <button data-design="820x312">FB cover 820×312</button>
+          <button data-design="1200x630">FB post 1200×630</button>
+          <button data-design="1240x1754">Poster A4</button>
+          <button data-design="1200x300">Banner 1200×300</button>
+          <button data-design="1000x1000">Logo 1000×1000</button>
+          <button data-design="collage">Collage 2×2</button>
+        </div>
+        <label>Custom W <input id="designW" type="number" min="1" max="8000" value="1080"></label>
+        <label>Custom H <input id="designH" type="number" min="1" max="8000" value="1080"></label>
+        <label class="chk"><input id="designTransparent" type="checkbox"> Transparent background (PNG)</label>
+        <div class="btn-row"><button id="btnNewDesign">Create canvas</button></div>
+        <h3>Frames</h3>
+        <div class="btn-row"><button data-frame="simple">Simple border</button><button data-frame="double">Double border</button></div>
+        <div class="btn-row"><button data-frame="polaroid">Polaroid</button><button data-frame="rounded">Rounded</button></div>
+        <h3>Gradient / pattern fill</h3>
+        <label>Fill type <select id="fillKind"><option value="linear">Linear gradient</option><option value="radial">Radial gradient</option><option value="checker">Checker pattern</option><option value="dots">Dots pattern</option><option value="lines">Lines pattern</option></select></label>
+        <label>Color 1 <input id="fillColor1" type="color" value="#7c3aed"></label>
+        <label>Color 2 <input id="fillColor2" type="color" value="#06b6d4"></label>
+        <div class="btn-row"><button id="btnFillLayer">Fill new layer</button><button id="btnFillSel">Fill selection</button></div>
+        <p class="hint">Presets really create a new document at those exact dimensions. Frames add a border layer on top. Gradient/pattern fill creates a new layer (or fills the selection).</p>
+      </section>
+      </div>
+
+      <div id="tabAdjustments" class="rtab-panel" hidden>
+      <section id="adjustSection">
+        <h3>Adjustments</h3>
+        <label>Apply to <select id="adjScope"><option value="layer">Selected layer</option><option value="all">All layers</option></select></label>
+        <label>Brightness <input id="adjBrightness" type="range" min="-100" max="100" value="0"><span id="adjBrightnessVal">0</span></label>
+        <label>Contrast <input id="adjContrast" type="range" min="-100" max="100" value="0"><span id="adjContrastVal">0</span></label>
+        <label>Saturation <input id="adjSaturation" type="range" min="-100" max="100" value="0"><span id="adjSaturationVal">0</span></label>
+        <label>Exposure <input id="adjExposure" type="range" min="-100" max="100" value="0"><span id="adjExposureVal">0</span></label>
+        <label>Temperature <input id="adjTemperature" type="range" min="-100" max="100" value="0"><span id="adjTemperatureVal">0</span></label>
+        <label>Tint <input id="adjTint" type="range" min="-100" max="100" value="0"><span id="adjTintVal">0</span></label>
+        <label>Highlights <input id="adjHighlights" type="range" min="-100" max="100" value="0"><span id="adjHighlightsVal">0</span></label>
+        <label>Shadows <input id="adjShadows" type="range" min="-100" max="100" value="0"><span id="adjShadowsVal">0</span></label>
+        <label>Sharpness <input id="adjSharpness" type="range" min="0" max="100" value="0"><span id="adjSharpnessVal">0</span></label>
+        <label>Blur <input id="adjBlur" type="range" min="0" max="20" value="0"><span id="adjBlurVal">0px</span></label>
+        <label>Vignette <input id="adjVignette" type="range" min="0" max="100" value="0"><span id="adjVignetteVal">0</span></label>
+        <label>Grain <input id="adjGrain" type="range" min="0" max="100" value="0"><span id="adjGrainVal">0</span></label>
+        <div class="btn-row"><button id="btnResetAdj">Reset adjustments</button></div>
+        <p class="hint">Adjustments are live and non-destructive — they are stored per layer and baked only on export. With a selection active and “selection only” checked, they affect just the selected area. Tint: + = magenta, − = green.</p>
+      </section>
+
+      <section id="advAdjustSection">
+        <h3>Curves &amp; Levels</h3>
+        <label>Channel <select id="curvesChannel"><option value="rgb">RGB</option><option value="r">Red</option><option value="g">Green</option><option value="b">Blue</option></select></label>
+        <canvas id="curvesCanvas" width="220" height="220" title="RGB curves — drag a point; tap the line to add a point; double-tap a point to remove it"></canvas>
+        <div class="btn-row"><button id="btnCurvesReset">Reset curves</button></div>
+        <label>Black point <input id="levelsBlack" type="range" min="0" max="200" value="0"><span id="levelsBlackVal">0</span></label>
+        <label>White point <input id="levelsWhite" type="range" min="55" max="255" value="255"><span id="levelsWhiteVal">255</span></label>
+        <label>Gamma <input id="levelsGamma" type="range" min="10" max="300" value="100"><span id="levelsGammaVal">1.00</span></label>
+        <h3>HSL</h3>
+        <label>Hue shift <input id="hslHue" type="range" min="-180" max="180" value="0"><span id="hslHueVal">0°</span></label>
+        <label>Saturation <input id="hslSat" type="range" min="-100" max="100" value="0"><span id="hslSatVal">0</span></label>
+        <label>Lightness <input id="hslLight" type="range" min="-100" max="100" value="0"><span id="hslLightVal">0</span></label>
+        <h3>Color balance</h3>
+        <label>Shadows R <input id="cbShR" type="range" min="-100" max="100" value="0"><span id="cbShRVal">0</span></label>
+        <label>Shadows G <input id="cbShG" type="range" min="-100" max="100" value="0"><span id="cbShGVal">0</span></label>
+        <label>Shadows B <input id="cbShB" type="range" min="-100" max="100" value="0"><span id="cbShBVal">0</span></label>
+        <label>Midtones R <input id="cbMidR" type="range" min="-100" max="100" value="0"><span id="cbMidRVal">0</span></label>
+        <label>Midtones G <input id="cbMidG" type="range" min="-100" max="100" value="0"><span id="cbMidGVal">0</span></label>
+        <label>Midtones B <input id="cbMidB" type="range" min="-100" max="100" value="0"><span id="cbMidBVal">0</span></label>
+        <label>Highlights R <input id="cbHiR" type="range" min="-100" max="100" value="0"><span id="cbHiRVal">0</span></label>
+        <label>Highlights G <input id="cbHiG" type="range" min="-100" max="100" value="0"><span id="cbHiGVal">0</span></label>
+        <label>Highlights B <input id="cbHiB" type="range" min="-100" max="100" value="0"><span id="cbHiBVal">0</span></label>
+        <h3>LUT (.cube)</h3>
+        <div class="btn-row"><button id="btnLutImport">Import .cube LUT…</button></div>
+        <label>Intensity <input id="lutIntensity" type="range" min="0" max="100" value="100"><span id="lutIntensityVal">100%</span></label>
+        <p id="lutStatus" class="hint">No LUT loaded. A .cube file is parsed on-device and applied with the intensity above.</p>
+        <p class="hint">Curves, Levels, HSL and Color Balance are live and non-destructive, like the sliders above.</p>
+      </section>
+
+      <section id="filterSection">
+        <h3>Filters</h3>
+        <div id="filterGrid" class="fx-grid"></div>
+        <p class="hint">Filters are real pixel presets — they set the adjustment values above (plus sepia / duotone pixel math). Pick one, then fine-tune with the sliders.</p>
+      </section>
+      </div>
+
+      <div id="tabHistory" class="rtab-panel" hidden>
+      <section id="historySection">
+        <h3>History</h3>
+        <div class="btn-row">
+          <button id="btnHistUndo" title="Undo (Ctrl+Z)"><span class="ico" data-ic="undo"></span> Undo</button>
+          <button id="btnHistRedo" title="Redo (Ctrl+Y)"><span class="ico" data-ic="redo"></span> Redo</button>
+          <button id="btnHistClear" title="Clear the undo history">Clear</button>
+        </div>
+        <div id="historyList"><p class="hint">No actions yet. Every edit is recorded here with its name — click an action to jump back to the state before it.</p></div>
+        <p class="hint">History holds up to 25 steps. Undo/redo restores the exact document state (layers, settings, canvas) from that step.</p>
+      </section>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- mobile bottom navigation: Tools / Layers / Adjust / Text / More -->
+<nav id="photoBottomNav" aria-label="Photo editor sections">
+  <button id="btnNavTools" class="pbnav-item"><span class="ico" data-ic="brush" data-ic-size="20"></span><span>Tools</span></button>
+  <button id="btnNavLayers" class="pbnav-item"><span class="ico" data-ic="layers" data-ic-size="20"></span><span>Layers</span></button>
+  <button id="btnNavAdjust" class="pbnav-item"><span class="ico" data-ic="sliders" data-ic-size="20"></span><span>Adjust</span></button>
+  <button id="btnNavText" class="pbnav-item"><span class="ico" data-ic="type" data-ic-size="20"></span><span>Text</span></button>
+  <button id="btnNavMore" class="pbnav-item"><span class="ico" data-ic="more-horizontal" data-ic-size="20"></span><span>More</span></button>
+</nav>
+<div id="moreSheet" class="menu-list" hidden>
+  <button class="menu-item" data-act="export">Export Photo…</button>
+  <button class="menu-item" data-act="save">Save Project</button>
+  <button class="menu-item" data-act="open">Open Image…</button>
+  <button class="menu-item" data-act="newBlank">New Blank Canvas</button>
+  <button class="menu-item" data-act="history">History Panel</button>
+  <button class="menu-item" data-act="filters">Filters Panel</button>
+  <button class="menu-item" data-act="newPreset">New from Design Preset…</button>
+  <button class="menu-item" data-act="toggleTheme">Toggle Dark / Light Theme</button>
+</div>
+
+<input id="photoFileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,.jpg,.jpeg,.png,.webp,.gif,.bmp" hidden>
+<input id="projectFileInput" type="file" accept="application/json,.json" hidden>
+<input id="lutFileInput" type="file" accept=".cube,text/plain" hidden>
+<input id="bgImageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,.jpg,.jpeg,.png,.webp,.gif,.bmp" hidden>
+
+<div id="importModal" class="modal" hidden>
+  <div class="modal-card">
+    <h3>Open image</h3>
+    <p id="importModalText">You already have an image open.</p>
+    <div class="btn-row"><button id="choiceReplace">Replace current image</button><button id="choiceLayer">Add as a new layer</button></div>
+    <div class="btn-row"><button id="choiceCancel">Cancel</button></div>
+  </div>
+</div>
+
+<div id="exportModal" class="modal" hidden>
+  <div class="modal-card">
+    <h3>Export photo</h3>
+    <label>Format <select id="exportFormat"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
+    <label>Quality <input id="exportQuality" type="range" min="10" max="100" value="92"><span id="exportQualityVal">92%</span></label>
+    <label>Export width <input id="exportWidth" type="number" min="0" max="8000" value="0" placeholder="original size" title="Leave blank for the original size"></label>
+    <p id="exportNote" class="hint">PNG keeps transparency (layers flatten onto a transparent canvas). JPG fills transparent areas with white.</p>
+    <p id="exportSizeText" class="hint">Preparing export…</p>
+    <div class="btn-row"><button id="btnDoExport" class="export-btn" disabled><span class="ico" data-ic="download"></span> Download</button><button id="btnExportCancel">Cancel</button></div>
+  </div>
+</div>
+
+<div id="savedModal" class="modal" hidden>
+  <div class="modal-card">
+    <h3>Saved projects</h3>
+    <div id="savedProjectList"><p class="hint">No saved projects yet.</p></div>
+    <div class="btn-row"><button id="btnDownloadBackup"><span class="ico" data-ic="download"></span> Backup (.json)</button><button id="btnImportBackup"><span class="ico" data-ic="upload"></span> Restore backup</button></div>
+    <div class="btn-row"><button id="btnSavedClose">Close</button></div>
+  </div>
+</div>
+
+<div id="presetModal" class="modal" hidden>
+  <div class="modal-card">
+    <h3>New canvas from preset</h3>
+    <p class="hint">Creates a new document at the exact size. Unsaved changes to the current project are autosaved first.</p>
+    <div class="preset-grid">
+      <button data-design="1280x720">YouTube thumb 1280×720</button>
+      <button data-design="1080x1080">IG post 1080×1080</button>
+      <button data-design="1080x1920">IG story 1080×1920</button>
+      <button data-design="820x312">FB cover 820×312</button>
+      <button data-design="1200x630">FB post 1200×630</button>
+      <button data-design="1240x1754">Poster A4</button>
+      <button data-design="1200x300">Banner 1200×300</button>
+      <button data-design="1000x1000">Logo 1000×1000</button>
+      <button data-design="collage">Collage 2×2</button>
+    </div>
+    <div class="btn-row"><button id="btnPresetClose">Cancel</button></div>
+  </div>
+</div>
+
+<div id="helpModal" class="modal" hidden>
+  <div class="modal-card">
+    <h3 id="helpTitle">Help</h3>
+    <div id="helpBody"></div>
+    <div class="btn-row"><button id="btnHelpClose">Close</button></div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<script src="icons.js"></script>
+<script src="modules/history.js"></script>
+<script src="modules/project-store.js"></script>
+<script src="modules/tokens.js"></script>
+<script src="capacitor-bridge.js"></script>
+<script src="photo.js"></script>
+</body>
+</html>

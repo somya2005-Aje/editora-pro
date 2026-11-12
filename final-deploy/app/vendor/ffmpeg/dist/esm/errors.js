@@ -1,0 +1,3 @@
+/* esm.sh - @ffmpeg/ffmpeg@0.12.15/dist/esm/errors */
+var e=new Error("unknown message type"),r=new Error("ffmpeg is not loaded, call `await ffmpeg.load()` first"),o=new Error("called FFmpeg.terminate()"),t=new Error("failed to import ffmpeg-core.js");export{t as ERROR_IMPORT_FAILURE,r as ERROR_NOT_LOADED,o as ERROR_TERMINATED,e as ERROR_UNKNOWN_MESSAGE_TYPE};
+//# sourceMappingURL=errors.mjs.map

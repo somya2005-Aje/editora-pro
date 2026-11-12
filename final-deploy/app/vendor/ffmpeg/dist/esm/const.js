@@ -1,0 +1,3 @@
+/* esm.sh - @ffmpeg/ffmpeg@0.12.15/dist/esm/const */
+var I="text/javascript",L="application/wasm",O="0.12.9",D=`https://unpkg.com/@ffmpeg/core@${O}/dist/umd/ffmpeg-core.js`,R;(function(E){E.LOAD="LOAD",E.EXEC="EXEC",E.FFPROBE="FFPROBE",E.WRITE_FILE="WRITE_FILE",E.READ_FILE="READ_FILE",E.DELETE_FILE="DELETE_FILE",E.RENAME="RENAME",E.CREATE_DIR="CREATE_DIR",E.LIST_DIR="LIST_DIR",E.DELETE_DIR="DELETE_DIR",E.ERROR="ERROR",E.DOWNLOAD="DOWNLOAD",E.PROGRESS="PROGRESS",E.LOG="LOG",E.MOUNT="MOUNT",E.UNMOUNT="UNMOUNT"})(R||(R={}));export{D as CORE_URL,O as CORE_VERSION,R as FFMessageType,I as MIME_TYPE_JAVASCRIPT,L as MIME_TYPE_WASM};
+//# sourceMappingURL=const.mjs.map

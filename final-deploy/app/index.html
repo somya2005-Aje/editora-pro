@@ -8,50 +8,424 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body data-theme="dark">
-<div id="app">
+
+<!-- ============ HOME DASHBOARD (Stage 1) ============ -->
+<div id="homeView">
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header id="homeTop">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <div class="sp"></div>
+    <span class="free-badge" title="Editora Pro is 100% free — no ads, no watermark, no paid plans">FREE • No Watermark</span>
+    <button id="btnHomeSettings" title="Settings"><span class="ico" data-ic="settings"></span> Settings</button>
+  </header>
+  <main id="homeMain">
+    <h1>What do you want to create today?</h1>
+    <p class="home-sub">Free video &amp; photo editor — no ads, no watermark, no login, no AI. Everything runs on your device.</p>
+    <div id="homeCards">
+      <section class="home-card" id="homeVideoCard">
+        <div class="home-ico"><span class="ico" data-ic="clapperboard" data-ic-size="44"></span></div>
+        <h2>Video Editor</h2>
+        <p>Multi-track timeline, trim / split / merge, transitions, effects, text, captions, audio mixing and MP4 export.</p>
+        <button id="btnHomeVideo" class="btn">Open Video Editor →</button>
+      </section>
+      <section class="home-card" id="homePhotoCard">
+        <div class="home-ico"><span class="ico" data-ic="image" data-ic-size="44"></span></div>
+        <h2>Photo Editor</h2>
+        <p>Crop, layers, brush, filters and color grading for photos and thumbnails.</p>
+        <a href="photo.html" class="btn" id="btnHomePhoto">Open Photo Editor →</a>
+      </section>
+    </div>
+    <div class="row" style="justify-content:center"><button id="btnHomeNew" class="btn">+ New Project</button><button id="btnHomeOpen" class="btn">Open Project</button><button id="btnHomeImport" class="btn"><span class="ico" data-ic="upload"></span> Import Media</button><button id="btnHomeTemplates" class="mini"><span class="ico" data-ic="sparkles"></span> Browse Templates</button></div>
+    <section id="homeRecentWrap">
+      <h2>Recent Projects</h2>
+      <p class="hint">Saved on this device. Click a project to open it in the video editor.</p>
+      <div id="homeRecent"><p class="hint">No saved projects yet — start a new project and it will auto-save here.</p></div>
+    </section>
+    <section id="homeExportedWrap">
+      <h2>Recently Exported</h2>
+      <p class="hint">Every export from this device, newest first — including failed or cancelled exports.</p>
+      <div id="homeExported"><p class="hint">No exports yet — export a video and it will appear here.</p></div>
+    </section>
+    <section id="homeStorageWrap">
+      <h2>Storage</h2>
+      <div id="storageMeter"><div id="storageMeterBar"></div></div>
+      <p class="hint" id="storageMeterText">Measuring storage…</p>
+      <div class="row" style="justify-content:center"><button id="btnClearCacheHome" class="mini"><span class="ico" data-ic="trash"></span> Clear media cache</button></div>
+    </section>
+  </main>
+  </div>
+</div>
+
+<!-- ============ APP SCREENS (Phase 1) ============ -->
+<div id="projectsView" class="screen-view" hidden>
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header class="screen-head">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <button class="mini back-home" data-screen="home"><span class="ico" data-ic="arrow-left"></span> Back to Home</button>
+  </header>
+  <main class="screen-main">
+    <h1><span class="ico" data-ic="folder" data-ic-size="22"></span> Projects</h1>
+    <p class="hint">All projects saved on this device. Video projects open in the Video Editor; photo projects open in the Photo Editor.</p>
+    <div class="row filter-row" id="projFilters">
+      <button class="mini on" data-pf="all">All</button>
+      <button class="mini" data-pf="video">Video</button>
+      <button class="mini" data-pf="photo">Photo</button>
+      <button class="mini" data-pf="recent">Recent</button>
+      <button class="mini" data-pf="favorites">Favorites</button>
+      <button class="mini" data-pf="drafts">Drafts</button>
+      <button class="mini" data-pf="recovered">Recovered</button>
+    </div>
+    <p class="hint">Drafts = video projects that have never been exported. Recovered = video projects saved only by autosave (never saved manually). Recent = updated in the last 7 days.</p>
+    <div class="row">
+      <button id="btnNewProject" class="mini">+ New Project</button>
+      <button id="btnSaveProject" class="mini"><span class="ico" data-ic="save"></span> Save Now</button>
+      <button id="btnExportProj" class="mini"><span class="ico" data-ic="download"></span> Backup (JSON)</button>
+      <button id="btnImportProj" class="mini"><span class="ico" data-ic="upload"></span> Restore (JSON)</button>
+    </div>
+    <input type="file" id="projInput" accept=".json" hidden>
+    <div id="projectList"></div>
+    <h3 style="margin-top:18px">Recovery history</h3>
+    <p class="hint">Projects found by autosave after a reload or a crash — listed honestly with when they were found. A project leaves this list once you save it manually.</p>
+    <div id="recoveryList"></div>
+    <div class="row"><button id="btnClearRecovery" class="mini"><span class="ico" data-ic="trash"></span> Clear recovery history</button></div>
+  </main>
+  </div>
+</div>
+
+<div id="libraryView" class="screen-view" hidden>
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header class="screen-head">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <button class="mini back-home" data-screen="home"><span class="ico" data-ic="arrow-left"></span> Back to Home</button>
+  </header>
+  <main class="screen-main">
+    <h1><span class="ico" data-ic="image" data-ic-size="22"></span> Media Library</h1>
+    <p class="hint">Everything imported on this device. Tap a thumbnail to preview it in the editor; “+ Timeline” adds it to the timeline.</p>
+    <div class="row filter-row" id="libTabs">
+      <button class="mini on" data-lt="all">Imported Files</button>
+      <button class="mini" data-lt="video">Videos</button>
+      <button class="mini" data-lt="image">Photos</button>
+      <button class="mini" data-lt="audio">Audio</button>
+      <button class="mini" data-lt="favorites">Favorites</button>
+      <button class="mini" data-lt="recent">Recent Imports</button>
+      <button class="mini" data-lt="folders">Custom Folders</button>
+    </div>
+    <div class="row">
+      <input id="libSearch" placeholder="Search by filename…" class="fld" style="flex:1">
+      <label style="margin:0">Sort <select id="libSort" class="fld" style="width:auto"><option value="date">Newest first</option><option value="name">Name A–Z</option><option value="type">Type</option></select></label>
+    </div>
+    <div id="folderBar" hidden>
+      <div class="row" id="folderChips"></div>
+      <div class="row"><button id="btnNewFolder" class="mini">+ New Folder</button></div>
+      <p class="hint">Tap a folder to see its media. Use the folder menu on a media item to move it into a folder. Double-tap a folder name to rename it.</p>
+    </div>
+    <div id="libGrid" class="media-list"></div>
+  </main>
+  </div>
+</div>
+
+<div id="templatesView" class="screen-view" hidden>
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header class="screen-head">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <button class="mini back-home" data-screen="home"><span class="ico" data-ic="arrow-left"></span> Back to Home</button>
+  </header>
+  <main class="screen-main">
+    <h1><span class="ico" data-ic="sparkles" data-ic-size="22"></span> Templates</h1>
+    <p class="hint">Click a template to really apply it to your current project.</p>
+    <h3>Video templates</h3>
+    <div id="videoTemplates" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Title styles</h3>
+    <p class="hint">Applies to the Text panel, and to the selected text clip if one is selected.</p>
+    <div id="titleStyles" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Text presets (Phase 4)</h3>
+    <p class="hint">14 real text styles — Titles, Headings, Subtitles, Credits, End screens, Lower thirds, 3D-style, Neon, Gradient, Outline, Shadow, Glow, Transparent text, Kinetic typography. Applies to the Text panel, and to the selected text clip if one is selected.</p>
+    <div id="textPresets" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Caption styles</h3>
+    <p class="hint">Applies to all captions in the current project.</p>
+    <div id="capStyles" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Intro templates</h3>
+    <p class="hint">Each one really applies a full intro treatment to the timeline: a title clip at the start plus a fade on the first clip.</p>
+    <div id="introTemplates" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Outro templates</h3>
+    <p class="hint">Each one really applies a full outro treatment: an end card at the end of the timeline plus a fade on the last clip.</p>
+    <div id="outroTemplates" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Transition presets</h3>
+    <p class="hint">Named transition setups saved from the Transitions panel — tap one to load it, then Apply it to a clip.</p>
+    <div id="transPresetLib" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Effect presets</h3>
+    <p class="hint">Named per-clip effect setups saved from the Effects panel — tap one to apply it to the selected video clip.</p>
+    <div id="fxPresetLib" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Grade presets (full look)</h3>
+    <p class="hint">Full looks saved from the Filters panel — grading + filter + curves + HSL + wheels + balance.</p>
+    <div id="gradePresetLib" class="fx-grid"></div>
+    <h3 style="margin-top:16px">LUT library (.cube)</h3>
+    <p class="hint">LUT files you have imported. The .cube file itself is not stored with the project — only its name is remembered. Tap a LUT to re-import it (the file picker opens); the currently loaded LUT is marked.</p>
+    <div id="lutLib" class="fx-grid"></div>
+    <div class="row"><button id="btnImportLUT2" class="mini"><span class="ico" data-ic="upload"></span> Import .cube LUT</button></div>
+    <h3 style="margin-top:16px">Stickers</h3>
+    <p class="hint">Tap a sticker to add it as a clip on the timeline at the playhead.</p>
+    <div id="assetStickers" class="sticker-grid"></div>
+    <h3 style="margin-top:16px">Shapes</h3>
+    <p class="hint">Tap a shape to add it as a coloured overlay clip on the timeline at the playhead. Pick the colour first.</p>
+    <div class="row"><label>Shape colour <input type="color" id="shapeColor" value="#22d3ee"></label></div>
+    <div id="assetShapes" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Backgrounds</h3>
+    <p class="hint">Tap one to create a real 1920×1080 background image (made on-device) and add it to the timeline as an image clip.</p>
+    <div class="row"><label>Colour 1 <input type="color" id="bgColor1" value="#0b1026"></label><label>Colour 2 <input type="color" id="bgColor2" value="#2878ff"></label></div>
+    <div id="assetBackgrounds" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Sound effects (built-in, synthesized)</h3>
+    <p class="hint">Synthesized on your device with Web Audio — no licensed music, no downloads. Play previews it; + Timeline adds it as an audio clip.</p>
+    <div id="assetSfx" class="fx-grid"></div>
+    <h3 style="margin-top:16px">Music — built-in tones only</h3>
+    <p class="hint">Short synthesized loops made on-device (pad / arpeggio / drone). These are built-in tones, NOT licensed songs — Editora Pro has no licensed music library.</p>
+    <div id="assetBgm" class="fx-grid"></div>
+  </main>
+  </div>
+</div>
+
+<div id="exportView" class="screen-view" hidden>
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header class="screen-head">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <button class="mini back-home" data-screen="home"><span class="ico" data-ic="arrow-left"></span> Back to Home</button>
+  </header>
+  <main class="screen-main">
+    <h1><span class="ico" data-ic="download" data-ic-size="22"></span> Export Center</h1>
+    <p class="hint">Export the current video project, or open the Photo Editor to export a photo.</p>
+    <div class="row">
+      <button id="btnExpCenterVideo" class="btn"><span class="ico" data-ic="clapperboard"></span> Export Video…</button>
+      <a href="photo.html" class="btn" id="btnExpCenterPhoto"><span class="ico" data-ic="image"></span> Export Photo…</a>
+    </div>
+    <h3 style="margin-top:18px">Export queue (batch export)</h3>
+    <p class="hint">Queue several exports — e.g. the same timeline at 480p, 720p and 1080p — and run them one after another. Every job produces a real file or a real Failed entry with a reason. Pause stops between jobs; Cancel stops the queue (and stops the job currently running).</p>
+    <div class="row">
+      <button id="btnQueueAddCurrent" class="mini">+ Add current export settings to queue</button>
+      <button id="btnQueuePreset" class="mini">+ Queue 480p + 720p + 1080p</button>
+      <button id="btnRunQueue" class="mini"><span class="ico" data-ic="play"></span> Run queue</button>
+      <button id="btnPauseQueue" class="mini"><span class="ico" data-ic="pause"></span> Pause</button>
+      <button id="btnCancelQueue" class="mini"><span class="ico" data-ic="stop"></span> Cancel queue</button>
+    </div>
+    <div id="expQueueList"></div>
+    <h3 style="margin-top:18px">Export current frame as a photo</h3>
+    <p class="hint">Saves the frame under the playhead as JPG, PNG or WebP, at the size you choose. JPG has no transparency (it is filled white). TIFF is not offered — no browser or WebView can encode it.</p>
+    <div class="row">
+      <label>Format <select id="frameFmt" class="fld" style="width:auto"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
+      <label>Quality <input type="range" id="frameQuality" min="50" max="100" value="92"><span id="frameQualityV">92%</span></label>
+      <label>Width <input type="number" id="frameW" class="fld" style="width:90px" value="1280" min="16" max="4096"></label>
+      <label>Height <input type="number" id="frameH" class="fld" style="width:90px" value="720" min="16" max="4096"></label>
+      <button id="btnExportFrame2" class="mini"><span class="ico" data-ic="camera"></span> Export frame</button>
+    </div>
+    <h3 style="margin-top:18px">Complete project backup</h3>
+    <p class="hint">One JSON file with the full project (timeline, text, captions, settings) plus a media manifest. Small media files (under 5 MB) are embedded in the file so they restore too; larger videos are listed in the manifest — re-import them after restoring (the restore tells you exactly which ones are missing).</p>
+    <div class="row">
+      <button id="btnFullBackup" class="mini"><span class="ico" data-ic="save"></span> Full backup (JSON + media manifest)</button>
+      <button id="btnRestoreBackup" class="mini"><span class="ico" data-ic="upload"></span> Restore full backup</button>
+    </div>
+    <input type="file" id="fullBackupInput" accept=".json" hidden>
+    <p class="hint" id="fullBackupNote"></p>
+    <h3 style="margin-top:18px">Export history</h3>
+    <p class="hint">Every export from this device, newest first — including failed and cancelled ones.</p>
+    <div id="expHistoryList"></div>
+    <div class="row"><button id="btnClearExpHistory" class="mini"><span class="ico" data-ic="trash"></span> Clear history</button></div>
+  </main>
+  </div>
+</div>
+
+<div id="settingsView" class="screen-view" hidden>
+  <nav class="appnav" data-nav aria-label="App sections"></nav>
+  <div class="screen-body">
+  <header class="screen-head">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <button class="mini back-home" data-screen="home"><span class="ico" data-ic="arrow-left"></span> Back to Home</button>
+  </header>
+  <main class="screen-main">
+    <h1><span class="ico" data-ic="settings" data-ic-size="22"></span> Settings</h1>
+    <p class="hint">Settings save on this device immediately and apply right away.</p>
+    <section class="set-section"><h3>General</h3>
+      <label><input type="checkbox" id="setConfirmDelete"> Ask before deleting a clip</label><br>
+      <label><input type="checkbox" id="setRestoreLast"> Reopen the last project when the app starts</label>
+    </section>
+    <section class="set-section"><h3>Appearance</h3>
+      <label>Theme <select id="setThemeSel" class="fld"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+    </section>
+    <section class="set-section"><h3>Theme</h3>
+      <div class="row"><button id="btnThemeDark" class="mini"><span class="ico" data-ic="moon"></span> Dark</button><button id="btnThemeLight" class="mini"><span class="ico" data-ic="sun"></span> Light</button></div>
+      <p class="hint">Same setting as Appearance above — both stay in sync.</p>
+    </section>
+    <section class="set-section"><h3>Language</h3>
+      <label>Language <select id="setLang" class="fld"><option value="en">English</option></select></label>
+      <p class="hint">Only English is available right now.</p>
+    </section>
+    <section class="set-section"><h3>Export Defaults</h3>
+      <label>Default export resolution <select id="setDefRes" class="fld"><option value="480">480p</option><option value="720">720p</option><option value="1080" selected>1080p</option><option value="1440">2K</option><option value="2160">4K</option></select></label>
+      <label>Default FPS <select id="setDefFps" class="fld"><option>24</option><option>25</option><option selected>30</option><option>50</option><option>60</option></select></label>
+      <label>Default format <select id="setDefFmt" class="fld"><option value="mp4">MP4</option><option value="webm">WebM</option></select></label>
+      <p class="hint">These are used when the Export dialog opens.</p>
+    </section>
+    <section class="set-section"><h3>Autosave</h3>
+      <label><input type="checkbox" id="setAutosave" checked> Auto-save project</label><br>
+      <label>Save after <select id="setAutosaveInterval" class="fld" style="width:auto"><option value="1">1 second</option><option value="2">2 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select> of no changes</label>
+    </section>
+    <section class="set-section"><h3>Keyboard Shortcuts</h3>
+      <p class="hint">Space — Play / Pause &nbsp;·&nbsp; S — Split clip at playhead &nbsp;·&nbsp; M — Add marker at playhead<br>Delete — Delete selected clip &nbsp;·&nbsp; ← / → — Step one frame<br>Ctrl+Z — Undo &nbsp;·&nbsp; Ctrl+Y — Redo &nbsp;·&nbsp; Esc — Close dialog / menu<br>Every action above also has a button you can tap — shortcuts are never the only way.</p>
+    </section>
+    <section class="set-section"><h3>Storage</h3>
+      <p class="hint" id="storageInfo">Measuring storage…</p>
+      <div class="row"><button id="btnClearData" class="mini"><span class="ico" data-ic="trash"></span> Clear all saved data</button></div>
+      <p class="hint">Clears all saved projects, presets and history on this device. This cannot be undone.</p>
+    </section>
+    <section class="set-section"><h3>Media Cache</h3>
+      <p class="hint" id="cacheInfo">Media cache not measured yet.</p>
+      <div class="row"><button id="btnClearCache" class="mini"><span class="ico" data-ic="trash"></span> Clear unused media cache</button></div>
+      <p class="hint">Removes saved media files that no saved project uses. Media in your projects is never removed.</p>
+    </section>
+    <section class="set-section"><h3>Project Backup</h3>
+      <div class="row"><button id="btnBackupAll" class="mini"><span class="ico" data-ic="download"></span> Export all projects (JSON)</button><button id="btnImportAll" class="mini"><span class="ico" data-ic="upload"></span> Import projects (JSON)</button></div>
+      <input type="file" id="importAllInput" accept=".json" hidden>
+      <p class="hint">A backup restores the timeline, text, captions and settings — media files are not included (they stay on this device).</p>
+    </section>
+    <section class="set-section"><h3>Performance</h3>
+      <label>Preview quality <select id="setPreviewQuality" class="fld"><option value="low">Low — fastest preview</option><option value="medium">Medium</option><option value="high" selected>High — full preview</option></select></label>
+      <p class="hint">Changes the preview render size in the editor. Export quality is set separately in the Export dialog.</p>
+    </section>
+    <section class="set-section"><h3>About</h3>
+      <p class="hint">Editora Pro — version <span id="appVersion">1.0.0</span> (Phase 1). Free, ad-free, no watermark, no login, no AI. HTML / CSS / Vanilla JS. Media is processed on your device; projects save locally (IndexedDB, localStorage fallback).</p>
+    </section>
+  </main>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <!-- ============ TOP MENU BAR (§4: File Edit View Sequence Clip Effects Audio Help) ============ -->
+  <nav id="menubar" aria-label="Editor menus">
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="file" aria-haspopup="true">File</button>
+      <div class="dropdown menudrop" id="menu-file" hidden>
+        <button data-ma="new">New Project</button>
+        <button data-ma="projects">Open Projects…</button>
+        <button data-ma="save">Save Project</button>
+        <button data-ma="backup">Backup Project (JSON)…</button>
+        <button data-ma="export">Export Video…</button>
+        <button data-ma="frame">Export Current Frame…</button>
+        <button data-ma="home">Back to Home</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="edit" aria-haspopup="true">Edit</button>
+      <div class="dropdown menudrop" id="menu-edit" hidden>
+        <button data-ma="undo">Undo</button>
+        <button data-ma="redo">Redo</button>
+        <button data-ma="split">Split Clip at Playhead</button>
+        <button data-ma="cut">Cut</button>
+        <button data-ma="copy">Copy Selected Clip</button>
+        <button data-ma="paste">Paste at Playhead</button>
+        <button data-ma="duplicate">Duplicate Selected Clip</button>
+        <button data-ma="delete">Delete Selected Clip</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="view" aria-haspopup="true">View</button>
+      <div class="dropdown menudrop" id="menu-view" hidden>
+        <button data-ma="leftpanel">Toggle Left Panel</button>
+        <button data-ma="rightpanel">Toggle Right Panel</button>
+        <button data-ma="panels">Toggle Side Panels</button>
+        <button data-ma="zoomin">Timeline Zoom In</button>
+        <button data-ma="zoomout">Timeline Zoom Out</button>
+        <button data-ma="tlexpand">Expand / Collapse Timeline</button>
+        <button data-ma="fullscreen">Fullscreen Preview</button>
+        <button data-ma="theme">Toggle Dark / Light Theme</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="sequence" aria-haspopup="true">Sequence</button>
+      <div class="dropdown menudrop" id="menu-sequence" hidden>
+        <button data-ma="marker">Add Marker at Playhead</button>
+        <button data-ma="insert">Insert Media at Playhead…</button>
+        <button data-ma="ripple">Toggle Ripple (Same Track / All Tracks)</button>
+        <button data-ma="gostart">Go to Start</button>
+        <button data-ma="goend">Go to End</button>
+        <button data-ma="fps">Project Frame Rate…</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="clip" aria-haspopup="true">Clip</button>
+      <div class="dropdown menudrop" id="menu-clip" hidden>
+        <button data-ma="split">Split Clip at Playhead</button>
+        <button data-ma="merge">Merge with Next Clip</button>
+        <button data-ma="duplicate">Duplicate Selected Clip</button>
+        <button data-ma="delete">Delete Selected Clip</button>
+        <button data-ma="rippledelete">Ripple Delete</button>
+        <button data-ma="reverse">Reverse Selected Clip</button>
+        <button data-ma="freeze">Freeze Frame at Playhead</button>
+        <button data-ma="speed">Clip Speed…</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="effects" aria-haspopup="true">Effects</button>
+      <div class="dropdown menudrop" id="menu-effects" hidden>
+        <button data-ma="fxpanel">Video Effects Panel</button>
+        <button data-ma="transpanel">Transitions Panel</button>
+        <button data-ma="filterpanel">Filters &amp; Color Panel</button>
+        <button data-ma="adjust">Color Grading (Right Panel)</button>
+        <button data-ma="clearfx">Clear Selected Clip Effects</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="audio" aria-haspopup="true">Audio</button>
+      <div class="dropdown menudrop" id="menu-audio" hidden>
+        <button data-ma="audiopanel">Audio Panel</button>
+        <button data-ma="importaudio">Import Audio…</button>
+        <button data-ma="splitaudio">Split Audio at Playhead</button>
+        <button data-ma="normaudio">Normalize Audio (Peak)</button>
+        <button data-ma="previewaudiofx">Preview Audio Effects</button>
+        <button data-ma="ducking">Toggle Audio Ducking</button>
+      </div></div>
+    <div class="menu-wrap"><button class="menubar-btn" data-menu="help" aria-haspopup="true">Help</button>
+      <div class="dropdown menudrop" id="menu-help" hidden>
+        <button data-ma="shortcuts">Keyboard Shortcuts</button>
+        <button data-ma="exportcenter">Export Center</button>
+        <button data-ma="settings">Settings</button>
+        <button data-ma="about">About Editora Pro</button>
+      </div></div>
+  </nav>
   <!-- ============ TOP BAR (CapCut-style) ============ -->
   <header id="topbar">
+    <button id="btnHome" title="Back to home dashboard"><span class="ico" data-ic="home"></span> Home</button>
+    <button id="btnCollapseLeft" class="icon-btn" title="Collapse / expand the left panel" aria-label="Toggle left panel"><span class="ico" data-ic="panel-left"></span></button>
+    <button id="btnCollapseRight" class="icon-btn" title="Collapse / expand the right panel" aria-label="Toggle right panel"><span class="ico" data-ic="panel-right"></span></button>
     <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
     <div class="menu-wrap">
-      <button id="btnMenu" title="Menu">Menu ▾</button>
+      <button id="btnMenu" title="Menu"><span class="ico" data-ic="menu"></span> Menu</button>
       <div id="menuDrop" class="dropdown" hidden>
-        <button data-m="new">＋ New Project</button>
-        <button data-m="projects">📁 Open Projects</button>
-        <button data-m="save">💾 Save Project</button>
-        <button data-m="templates">✨ Templates</button>
-        <button data-m="settings">⚙️ Settings</button>
-        <button data-m="about">ℹ️ About Editora Pro</button>
+        <button data-m="new">+ New Project</button>
+        <button data-m="projects"><span class="ico" data-ic="folder"></span> Open Projects</button>
+        <button data-m="save"><span class="ico" data-ic="save"></span> Save Project</button>
+        <button data-m="templates"><span class="ico" data-ic="sparkles"></span> Templates</button>
+        <button data-m="settings"><span class="ico" data-ic="settings"></span> Settings</button>
+        <button data-m="about"><span class="ico" data-ic="info"></span> About Editora Pro</button>
       </div>
     </div>
     <input id="projectName" value="Untitled Project" title="Project name (click to rename)" spellcheck="false">
     <span id="autosaveText" class="autosave" title="Projects auto-save locally">● Auto saved —</span>
+    <button id="btnSaveTop" title="Save project now"><span class="ico" data-ic="save"></span> Save</button>
+    <button id="btnUndoTop" title="Undo (Ctrl+Z)" aria-label="Undo"><span class="ico" data-ic="undo"></span></button>
+    <button id="btnRedoTop" title="Redo (Ctrl+Y)" aria-label="Redo"><span class="ico" data-ic="redo"></span></button>
+    <label title="Preview quality" style="display:flex;align-items:center;gap:4px;margin:0;font-size:12px">Quality <select id="prevQuality"><option value="low">Low</option><option value="medium">Medium</option><option value="high" selected>High</option></select></label>
+    <button id="btnLibraryTop" title="Media Library"><span class="ico" data-ic="image"></span> Library</button>
+    <button id="btnExportCenterTop" title="Export Center"><span class="ico" data-ic="download"></span> Exports</button>
     <div class="sp"></div>
-    <button id="btnShortcuts" title="Keyboard shortcuts">⌨ Shortcuts</button>
+    <button id="btnShortcuts" title="Keyboard shortcuts"><span class="ico" data-ic="keyboard"></span> Shortcuts</button>
     <span class="free-badge" title="Editora Pro is 100% free — no ads, no watermark, no paid plans">FREE • No Watermark</span>
-    <button id="btnProjects" title="Projects">📁 Projects</button>
-    <button id="btnTemplates" title="Templates">✨ Templates</button>
-    <button id="btnSettings" title="Settings">⚙️ Settings</button>
-    <button id="btnTheme" title="Toggle dark / light theme">🌙</button>
-    <button id="btnShare" class="share-btn" title="Share">↗ Share</button>
-    <button id="btnExport" class="export-btn">⬇ Export</button>
+    <button id="btnProjects" title="Projects"><span class="ico" data-ic="folder"></span> Projects</button>
+    <button id="btnTemplates" title="Templates"><span class="ico" data-ic="sparkles"></span> Templates</button>
+    <button id="btnSettings" title="Settings"><span class="ico" data-ic="settings"></span> Settings</button>
+    <button id="btnTheme" title="Toggle dark / light theme" aria-label="Toggle theme"><span class="ico" data-ic="moon"></span></button>
+    <button id="btnShare" class="share-btn" title="Share"><span class="ico" data-ic="share"></span> Share</button>
+    <button id="btnExport" class="export-btn"><span class="ico" data-ic="download"></span> Export</button>
   </header>
 
   <!-- ============ TOP TOOLBAR (CapCut icon row) ============ -->
-  <nav id="toolbar">
-    <button class="toolbtn on" data-tab="media" title="Import media from your device">📥<span>Import</span></button>
-    <button class="toolbtn" data-tab="audio" title="Audio tools">🎵<span>Audio</span></button>
-    <button class="toolbtn" data-tab="text" title="Add text overlays">✏️<span>Text</span></button>
-    <button class="toolbtn" data-tab="stickers" title="Stickers">😀<span>Stickers</span></button>
-    <button class="toolbtn" data-tab="effects" title="Video effects">✨<span>Effects</span></button>
-    <button class="toolbtn" data-tab="trans" title="Transitions between clips">🔀<span>Transitions</span></button>
-    <button class="toolbtn" data-tab="captions" title="Subtitles and captions">💬<span>Captions</span></button>
-    <button class="toolbtn" data-tab="filters" title="Filters and color presets">🎨<span>Filters</span></button>
-    <button class="toolbtn" data-tab="photo" title="Photo editor">🖼️<span>Photo</span></button>
-    <span class="tb-sep"></span>
-    <div class="modes">
-      <button id="modeVideo" class="mode on">🎬 Video Editor</button>
-      <button id="modePhoto" class="mode">🖼️ Photo Editor</button>
-    </div>
+  <nav id="toolbar" aria-label="Editor panels">
+    <button class="toolbtn on" data-tab="media" title="Media Bin — import video, photos and audio"><span class="ico" data-ic="folder" data-ic-size="20"></span><span>Media Bin</span></button>
+    <button class="toolbtn" data-tab="effects" title="Effects, filters, color and pro tools"><span class="ico" data-ic="sparkles" data-ic-size="20"></span><span>Effects</span></button>
+    <button class="toolbtn" data-tab="trans" title="Transitions between clips"><span class="ico" data-ic="shuffle" data-ic-size="20"></span><span>Transitions</span></button>
+    <button class="toolbtn" data-tab="text" title="Titles and text overlays"><span class="ico" data-ic="type" data-ic-size="20"></span><span>Titles</span></button>
+    <button class="toolbtn" data-tab="captions" title="Subtitles and captions"><span class="ico" data-ic="message-square" data-ic-size="20"></span><span>Captions</span></button>
+    <button class="toolbtn" data-tab="audio" title="Audio tools"><span class="ico" data-ic="music" data-ic-size="20"></span><span>Audio</span></button>
+    <button class="toolbtn" data-tab="assets" title="Stickers, shapes, backgrounds and sounds"><span class="ico" data-ic="shapes" data-ic-size="20"></span><span>Assets</span></button>
   </nav>
 
   <!-- ============ MAIN ROW ============ -->
@@ -65,14 +439,17 @@
           <button class="lib-nav-item" data-lib="media">Media</button>
           <button class="lib-nav-item" data-lib="presets">Your presets</button>
         </div>
-        <input id="mediaSearch" placeholder="🔍 Search media…" class="fld">
-        <div class="row"><button id="btnImport" class="btn import-big">＋ Import</button></div>
-        <div class="drop" id="dropZone">📥 Drop files here<br><span>video, photo or audio — from your device gallery</span></div>
+        <input id="mediaSearch" placeholder="Search media…" class="fld">
+        <div class="row">
+          <button id="btnImport" class="btn import-big">+ Import Video / Photos</button>
+          <button id="btnImportAudio2" class="mini wide">+ Import Audio</button>
+        </div>
+        <div class="drop" id="dropZone"><span class="ico" data-ic="upload" data-ic-size="22"></span> Drop files here<br><span>video, photo or audio — from your device gallery</span></div>
         <input type="file" id="fileInput" accept="video/*,image/*,audio/*" multiple hidden>
         <div class="row filter-row">
           <button id="btnFilterAll" class="mini on">All</button>
           <button id="btnFilterAdded" class="mini">Added</button>
-          <button id="btnFavFilter" class="mini">★ Favorites only</button>
+          <button id="btnFavFilter" class="mini"><span class="ico" data-ic="star"></span> Favorites only</button>
           <button id="btnSortName" class="mini">Sort: Name</button>
         </div>
         <div id="mediaList" class="media-list"><p class="hint">No media yet. Import a video or photo from your device to begin — click a thumbnail to preview it, or press “+ Timeline” to add it to the timeline.</p></div>
@@ -80,10 +457,21 @@
 
       <!-- TEXT -->
       <div class="panel" id="tab-text">
-        <h3>Text Overlay</h3>
-        <input id="txtContent" class="fld" placeholder="Type your text…" value="Hello Editora!">
+        <h3>Titles &amp; Text</h3>
+        <label>Style preset <select id="txtPreset" class="fld"><option value="">— Choose a text preset —</option></select></label>
+        <input id="txtContent" class="fld" placeholder="Type your text…" >
         <div class="row"><button id="btnAddText" class="mini wide">+ Add Text to Timeline</button></div>
+        <div class="row"><button id="btnTitleLower" class="mini">Lower Third</button><button id="btnTitleCredits" class="mini">Credits</button><button id="btnTitleEnd" class="mini">End Screen</button></div>
+        <p class="hint">Lower Third adds a name bar at the bottom; Credits adds a centered credit title; End Screen adds a big end card. Each is a real text clip at the playhead — edit it in the right panel after adding.</p>
         <label>Font <select id="txtFont" class="fld"><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Courier New</option><option>Impact</option><option>Comic Sans MS</option></select></label>
+        <label>Weight <select id="txtWeight" class="fld"><option value="400">Regular 400</option><option value="700" selected>Bold 700</option><option value="900">Black 900</option></select></label>
+        <label>Letter spacing <input type="range" id="txtSpacing" min="0" max="20" value="0"><span id="txtSpacingV">0px</span></label>
+        <label>Line height <input type="range" id="txtLineHeight" min="100" max="200" value="120"><span id="txtLineHeightV">1.20</span></label>
+        <label>Alignment <select id="txtAlign" class="fld"><option value="center">Center</option><option value="left">Left</option><option value="right">Right</option></select></label>
+        <label>Rotation ° <input type="range" id="txtRot" min="-180" max="180" value="0"><span id="txtRotV">0°</span></label>
+        <label>Opacity <input type="range" id="txtOpacity" min="10" max="100" value="100"><span id="txtOpacityV">100%</span></label>
+        <label><input type="checkbox" id="txtGrad"> Gradient text</label>
+        <label>Gradient colour 2 <input type="color" id="txtGrad2" value="#22d3ee"></label>
         <label>Size <input type="range" id="txtSize" min="16" max="120" value="48"><span id="txtSizeV">48px</span></label>
         <label>Color <input type="color" id="txtColor" value="#ffffff"></label>
         <label>Background <input type="color" id="txtBg" value="#000000"> <input type="checkbox" id="txtBgOn"> show</label>
@@ -95,110 +483,200 @@
         <p class="hint">Text animation (fade / slide / pop) lives in the right panel → Animation tab.</p>
       </div>
 
-      <!-- STICKERS -->
-      <div class="panel" id="tab-stickers">
-        <h3>Stickers</h3>
-        <p class="hint">Click a sticker — in Video mode it adds an emoji text clip to the timeline; in Photo mode it adds a sticker layer to your photo.</p>
-        <div id="stickerGrid" class="sticker-grid"></div>
-      </div>
-
       <!-- EFFECTS -->
       <div class="panel" id="tab-effects">
-        <h3>Effects (click to toggle)</h3>
-        <div id="fxList" class="fx-grid"></div>
+        <h3>Effects — per clip (click to toggle)</h3>
+        <p class="hint" id="fxClipLabel">Select a video clip on the timeline first — effects apply to that clip only. Each effect has a strength (slider below). All listed effects render in the preview (CSS/overlay approximation) and in the Canvas export (real pixel math); ◆ effects also render in the Video Engine export where noted.</p>
+        <div id="fxGroups"></div>
         <label>Effect strength <input type="range" id="fxStrength" min="0" max="100" value="60"><span id="fxStrengthV">60%</span></label>
+        <div class="row"><button id="btnFxClear" class="mini"><span class="ico" data-ic="x"></span> Clear clip effects</button><button id="btnFxCopy" class="mini"><span class="ico" data-ic="copy"></span> Copy effects</button><button id="btnFxPaste" class="mini"><span class="ico" data-ic="clipboard"></span> Paste effects</button></div>
+        <div class="row"><input id="fxPresetName" class="fld" placeholder="Effect preset name…" style="flex:1"><button id="btnSaveFxPreset" class="mini"><span class="ico" data-ic="save"></span> Save effect preset</button></div>
+        <div id="fxPresets" class="fx-grid"></div>
+        <p class="hint">An effect preset saves the selected clip's whole effect set + strength, so you can apply it to another clip later (also listed on the Templates screen).</p>
+        <h3 style="margin-top:12px">Global effects (whole preview)</h3>
+        <div id="fxList" class="fx-grid"></div>
+        <p class="hint">Global effects (above) apply to the whole preview and the Canvas export. Per-clip effects above are stored on the clip and travel with it.</p>
         <h3 style="margin-top:12px">Transform</h3>
         <div class="row">
-          <button id="btnRot90" class="mini">⟳ 90°</button><button id="btnRot180" class="mini">180°</button><button id="btnRot270" class="mini">⟲ 270°</button>
-          <button id="btnFlipH" class="mini">⇄ Flip H</button><button id="btnFlipV" class="mini">⇅ Flip V</button>
+          <button id="btnRot90" class="mini"><span class="ico" data-ic="rotate-cw"></span> 90°</button><button id="btnRot180" class="mini">180°</button><button id="btnRot270" class="mini"><span class="ico" data-ic="rotate-ccw"></span> 270°</button>
+          <button id="btnFlipH" class="mini"><span class="ico" data-ic="flip-h"></span> Flip H</button><button id="btnFlipV" class="mini"><span class="ico" data-ic="flip-v"></span> Flip V</button>
         </div>
-        <label>Crop ratio <select id="cropRatio" class="fld"><option value="free">Free</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></label>
-        <label>Crop zoom <input type="range" id="cropZoom" min="25" max="200" value="100"><span id="cropZoomV">100%</span></label>
-        <div class="row"><button id="btnFreeze" class="mini">❄ Freeze frame</button><button id="btnReverse" class="mini">⏪ Reverse preview</button></div>
-        <p class="hint">Reverse: preview plays backwards. Export renders forward (true reverse export needs re-encoding; labelled honestly in Export).</p>
+        <p class="hint">Rotation applies to the selected clip (or the whole preview when nothing is selected). Crop lives in the right panel → Video tab.</p>
+        <h3 style="margin-top:12px">Freeze frame &amp; reverse</h3>
+        <label>Freeze length (s) <input type="number" id="freezeDur" class="fld" value="2" min="0.5" max="10" step="0.5"></label>
+        <div class="row"><button id="btnFreeze" class="mini"><span class="ico" data-ic="snowflake"></span> Freeze frame at playhead</button><button id="btnReverse" class="mini"><span class="ico" data-ic="rewind"></span> Reverse preview</button></div>
+        <div class="row"><button id="btnClipReverse" class="mini wide"><span class="ico" data-ic="rewind"></span> Reverse selected clip (true reverse on FFmpeg export)</button></div>
+        <p class="hint">Reverse preview plays the timeline backwards. A clip marked “reversed” is really re-encoded backwards when you export with the Video Engine (FFmpeg); the canvas fallback export plays it forward and says so.</p>
+      <h3 style="margin-top:12px">Filters &amp; Color</h3>
+        <h3>Video filters (35 named + Normal)</h3>
+        <p class="hint">Tap a filter to apply it to the video preview and both exports. Intensity scales the look. Before/After holds the original while pressed. Save custom preset keeps your current grading + filter; Copy/Paste moves the whole filter + grading setup to another clip/project.</p>
+        <div class="row">
+          <label style="flex:1">Intensity <input type="range" id="filterIntensity" min="0" max="100" value="100"><span id="filterIntensityV">100%</span></label>
+        </div>
+        <div class="row">
+          <button id="btnFilterCompare" class="mini"><span class="ico" data-ic="eye"></span> Hold: Before</button>
+          <button id="btnFilterRemove" class="mini"><span class="ico" data-ic="x"></span> Remove filter</button>
+        </div>
+        <div class="row">
+          <input id="filterPresetName" class="fld" placeholder="Custom preset name…" style="flex:1">
+          <button id="btnFilterSavePreset" class="mini"><span class="ico" data-ic="save"></span> Save</button>
+        </div>
+        <div class="row"><button id="btnFilterCopy" class="mini"><span class="ico" data-ic="copy"></span> Copy settings</button><button id="btnFilterPaste" class="mini"><span class="ico" data-ic="clipboard"></span> Paste settings</button></div>
+        <div id="filterPresets" class="fx-grid"></div>
+        <p class="hint">Filters are real color math: CSS filters in the preview, pixel math in the Canvas export, and eq/hue/curves filters in the Video Engine export. See PHASE3_REPORT.md for the per-filter render path.</p>
+        <h3 style="margin-top:12px">Saved grade presets (full look)</h3>
+        <p class="hint">A grade preset saves the whole look — grading sliders, filter + intensity, curves, HSL, wheels and balance. Apply it to restore the full look later.</p>
+        <div id="gradePresets" class="fx-grid"></div>
+        <h3 style="margin-top:12px"><span class="ico" data-ic="puzzle"></span> Pro Tools</h3>
+        <p class="hint">Split screen, chroma key, masks, proxy preview, audio ducking and frame export. Everything here is real in the preview and in at least one export path — anything an export path cannot do is listed in the export result, never faked.</p>
+        <h3 style="margin-top:10px">Split screen</h3>
+        <p class="hint">Shows 2, 3 or 4 videos at once. Cell 1 is the V1 clip under the playhead; the other cells use the media you pick below (or the V2 clip at the same time, if there is one). Renders in the preview and in the Canvas export; the Video Engine export lists it as skipped.</p>
+        <label>Layout <select id="splitLayout" class="fld"><option value="">Off — single video</option><option value="2v">2 videos — side by side</option><option value="2h">2 videos — stacked</option><option value="3">3 videos — 1 large + 2 small</option><option value="4">4 videos — grid</option></select></label>
+        <div id="splitCells"></div>
+        <div class="row"><button id="btnSplitApply" class="mini wide"><span class="ico" data-ic="play"></span> Apply split screen</button><button id="btnSplitOff" class="mini wide"><span class="ico" data-ic="x"></span> Split screen off</button></div>
+        <h3 style="margin-top:10px">Chroma key / green screen</h3>
+        <p class="hint">Removes one colour from the SELECTED video clip (real canvas keying in the preview and in the Canvas export, composited over the V2 clip at the same time, or black if there is none). Tap the colour swatch, then tap the video frame to pick the colour from the picture.</p>
+        <div class="row"><button id="btnChromaToggle" class="mini"><span class="ico" data-ic="key"></span> Chroma key: Off</button><button id="btnChromaPick" class="mini"><span class="ico" data-ic="target"></span> Pick colour from frame</button></div>
+        <label>Key colour <input type="color" id="chromaColor" value="#00ff00"></label>
+        <label>Tolerance <input type="range" id="chromaTol" min="5" max="120" value="40"><span id="chromaTolV">40</span></label>
+        <label>Spill suppression <input type="range" id="chromaSpill" min="0" max="100" value="30"><span id="chromaSpillV">30%</span></label>
+        <h3 style="margin-top:10px">Mask (selected clip)</h3>
+        <p class="hint">Masks the selected video clip. Shape, linear and radial masks render in the Canvas export (feathered edges fade to black); the preview shows an approximate clip-path. “None” removes the mask.</p>
+        <label>Mask shape <select id="maskShape" class="fld"><option value="none">None</option><option value="rect">Rectangle</option><option value="ellipse">Ellipse</option><option value="linear">Linear (gradient wipe)</option><option value="radial">Radial (spotlight)</option></select></label>
+        <label>Mask direction <select id="maskDir" class="fld"><option value="left">Left → Right</option><option value="right">Right → Left</option><option value="up">Top → Bottom</option><option value="down">Bottom → Top</option></select></label>
+        <label>Feather <input type="range" id="maskFeather" min="0" max="100" value="20"><span id="maskFeatherV">20px</span></label>
+        <div class="row"><button id="btnMaskApply" class="mini wide">Apply mask to selected clip</button></div>
+        <h3 style="margin-top:10px">Proxy preview (large videos)</h3>
+        <p class="hint">For videos 60 s or longer, or files 100 MB or larger, a low-res 480p proxy is generated on import (Video Engine, on-device) so the preview stays smooth. The preview can use the proxy; exports ALWAYS use the original file.</p>
+        <label><input type="checkbox" id="proxyToggle"> Use proxy in preview when one exists</label>
+        <div class="row"><button id="btnGenProxy" class="mini"><span class="ico" data-ic="settings"></span> Generate proxy for current media</button></div>
+        <p class="hint" id="proxyStatus">No proxies yet.</p>
+        <h3 style="margin-top:10px">Audio ducking</h3>
+        <p class="hint">While a voice clip on A1 is playing, music clips on A2 are turned down by the amount below. Real time-based ducking in the Canvas export; the Video Engine export lists it as skipped. (The old “Duck music” button only set the music volume to 25% — this replaces it.)</p>
+        <div class="row"><button id="btnDuckToggle" class="mini"><span class="ico" data-ic="volume-1"></span> Ducking: Off</button></div>
+        <label>Duck amount <input type="range" id="duckAmt" min="0" max="90" value="60"><span id="duckAmtV">60% down</span></label>
+        <h3 style="margin-top:10px">Export current frame</h3>
+        <p class="hint">Saves the frame under the playhead as a real image file (PNG/JPG/WebP) with the current grade, text and captions burned in.</p>
+        <div class="row"><button id="btnExportFrame" class="mini wide"><span class="ico" data-ic="camera"></span> Export this frame as an image</button></div>
       </div>
 
       <!-- TRANSITIONS -->
       <div class="panel" id="tab-trans">
         <h3>Transition (between clips)</h3>
+        <p class="hint">Only transitions that really render are listed — every one below renders in the preview and in the Canvas export; the ones marked ◆ also render in the Video Engine (FFmpeg) export. Select a clip first, pick a transition, then Apply.</p>
         <select id="transType" class="fld">
-          <option value="none">None</option><option value="fade">Fade</option><option value="dissolve">Dissolve / Crossfade</option><option value="slide">Slide</option><option value="wipe">Wipe</option><option value="zoom">Zoom</option><option value="blur">Blur</option><option value="flash">Flash</option><option value="spin">Spin</option>
+          <optgroup label="Basic">
+            <option value="none">None</option><option value="fade">◆ Fade</option><option value="fadeblack">◆ Fade Black</option><option value="fadewhite">◆ Fade White</option><option value="dissolve">◆ Dissolve</option><option value="crossdissolve">◆ Cross Dissolve</option>
+          </optgroup>
+          <optgroup label="Zoom / Slide / Push">
+            <option value="zoomin">Zoom In</option><option value="zoomout">Zoom Out</option><option value="zoomthrough">Zoom Through</option><option value="zoomblur">Zoom Blur</option><option value="punchzoom">Punch Zoom</option>
+            <option value="slideleft">Slide Left</option><option value="slideright">Slide Right</option><option value="slideup">Slide Up</option><option value="slidedown">Slide Down</option>
+            <option value="pushleft">Push Left</option><option value="pushright">Push Right</option><option value="pushup">Push Up</option><option value="pushdown">Push Down</option>
+          </optgroup>
+          <optgroup label="Wipe / Spin / Blur">
+            <option value="wipe">Linear Wipe</option><option value="circlewipe">Circle Wipe</option><option value="clockwipe">Clock Wipe</option><option value="diagwipe">Diagonal Wipe</option>
+            <option value="spinleft">Spin Left</option><option value="spinright">Spin Right</option><option value="spin360">360 Spin</option><option value="whirl">Whirl</option>
+            <option value="gaussblur">Gaussian Blur</option><option value="motionblur">Motion Blur</option><option value="radialblur">Radial Blur</option>
+          </optgroup>
+          <optgroup label="Glitch / Flash / Cinematic">
+            <option value="rgbglitch">RGB Glitch</option><option value="digitalglitch">Digital Glitch</option><option value="pixelglitch">Pixel Glitch</option><option value="signalerror">Signal Error</option>
+            <option value="whiteflash">White Flash</option><option value="blackflash">Black Flash</option><option value="cameraflash">Camera Flash</option>
+            <option value="filmburn">Film Burn</option><option value="lightleak">Light Leak</option><option value="lensflare">Lens Flare</option><option value="filmdissolve">Film Dissolve</option>
+          </optgroup>
+          <optgroup label="Motion / 3D / Shape / Creative">
+            <option value="whippan">Whip Pan</option><option value="camerashake">Camera Shake</option><option value="motionsweep">Motion Sweep</option>
+            <option value="cube">Cube</option><option value="flip">Flip</option><option value="pageturn">Page Turn</option><option value="rotate3d">3D Rotate</option>
+            <option value="circlereveal">Circle Reveal</option><option value="rectreveal">Rectangle Reveal</option><option value="diamondreveal">Diamond Reveal</option>
+            <option value="liquid">Liquid</option><option value="inkspread">Ink Spread</option><option value="smokereveal">Smoke Reveal</option><option value="maskreveal">Mask Reveal</option>
+          </optgroup>
         </select>
         <label>Duration (s) <input type="range" id="transDur" min="0.2" max="2" step="0.1" value="0.5"><span id="transDurV">0.5s</span></label>
+        <label>Direction <select id="transDir" class="fld"><option value="auto" selected>Auto (from transition)</option><option value="left">Left</option><option value="right">Right</option><option value="up">Up</option><option value="down">Down</option></select></label>
+        <label>Speed <input type="range" id="transSpeed" min="25" max="200" value="100"><span id="transSpeedV">100%</span></label>
+        <label>Intensity <input type="range" id="transIntensity" min="10" max="200" value="100"><span id="transIntensityV">100%</span></label>
+        <label><input type="checkbox" id="transReverse"> Reverse transition</label>
+        <label>Easing <select id="transEase" class="fld"><option value="linear">Linear</option><option value="easeIn">Ease In</option><option value="easeOut">Ease Out</option><option value="easeInOut">Ease In-Out</option><option value="smooth">Smoothstep</option></select></label>
+        <label>Edge softness <input type="range" id="transSoft" min="0" max="100" value="0"><span id="transSoftV">0% (hard edge)</span></label>
         <div class="row"><button id="btnApplyTrans" class="mini wide">Apply to selected clip</button></div>
-        <p class="hint">Select a clip on the timeline first, then apply. Applied as fade-in/out on the selected clip in preview and in export.</p>
+        <div class="row"><button id="btnTransPreview" class="mini wide"><span class="ico" data-ic="play"></span> Preview transition</button><button id="btnRemoveTrans" class="mini wide"><span class="ico" data-ic="x"></span> Remove transition</button></div>
+        <div class="row"><input id="transPresetName" class="fld" placeholder="Preset name…" style="flex:1"><button id="btnSaveTransPreset" class="mini"><span class="ico" data-ic="save"></span> Save preset</button></div>
+        <div id="transPresets" class="fx-grid"></div>
+        <p class="hint">The transition plays at the start of that clip — across the boundary with the previous adjacent clip on the same track. Fade-family transitions really cross-dissolve from the previous clip’s last frame in the preview and in the Canvas export. In the Video Engine (FFmpeg) export only the ◆ fade family is rendered (as a real fade); every other transition is listed as skipped in the export result.</p>
       </div>
 
-      <!-- CAPTIONS -->
+      <!-- CAPTIONS (full panel, not a modal) -->
       <div class="panel" id="tab-captions">
         <h3>Subtitles / Captions</h3>
-        <div class="row"><button id="btnAddCap" class="mini">+ Add Caption</button><button id="btnImportSRT" class="mini">Import SRT</button><button id="btnExportSRT" class="mini">Export SRT</button><button id="btnExportVTT" class="mini">Export VTT</button></div>
+        <label>Caption track <select id="capTrackSel" class="fld"></select></label>
+        <div class="row"><button id="btnAddCapTrack" class="mini">+ New caption track</button></div>
+        <p class="hint">Two tracks are built in — Main and Secondary (e.g. a second language). The track selected above is the one listed, edited and exported below; both tracks render on the preview (Main at the bottom, Secondary above it). Pick the export track in the Export dialog? No — exports use the selected track, shown in the result.</p>
+        <div class="row"><button id="btnAddCap" class="mini">+ Add Caption</button><button id="btnImportSRT" class="mini">Import SRT/VTT</button><button id="btnExportSRT" class="mini">Export SRT</button><button id="btnExportVTT" class="mini">Export VTT</button><button id="btnExportASS" class="mini">Export ASS</button></div>
+        <div class="row"><button id="btnVoskCap" class="mini wide" disabled title="Offline speech recognition (Vosk) is not included — see the note below"><span class="ico" data-ic="mic"></span> Offline auto-captions (Vosk) — not available offline</button></div>
+        <p class="hint">Offline auto-captions were attempted, not shipped: the Vosk engine (vosk-browser) needs its speech model (~40 MB) downloaded at runtime — there is no offline-bundled model in this app, and a runtime download would break the offline-first rule for the Android app. The microphone button below uses your browser's built-in speech recognition instead, labelled honestly (not AI).</p>
         <input type="file" id="srtInput" accept=".srt,.vtt" hidden>
+        <div class="row"><button id="btnSpeechCap" class="mini wide"><span class="ico" data-ic="mic"></span> Auto-captions from microphone</button></div>
+        <p class="hint" id="srStatus">Browser speech recognition (on-device/browser engine, not AI). It listens through your microphone while the video plays and adds a caption for each spoken phrase. No audio is uploaded by Editora Pro; the browser may use its own built-in speech service.</p>
+        <h3 style="margin-top:10px">Caption style</h3>
+        <label>Font <select id="capFont" class="fld"><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Impact</option></select></label>
+        <label>Size <input type="range" id="capSize" min="14" max="48" value="22"><span id="capSizeV">22px</span></label>
+        <label>Text color <input type="color" id="capColor" value="#ffffff"></label>
+        <label>Background <input type="color" id="capBg" value="#000000"> <input type="checkbox" id="capBgOn" checked> show</label>
+        <label>Outline <input type="checkbox" id="capOutline" checked></label>
+        <label>Animation <select id="capAnim" class="fld"><option value="none">None</option><option value="fade">Fade in</option><option value="slide">Slide up</option><option value="pop">Pop</option></select></label>
         <label><input type="checkbox" id="karaokeToggle"> Karaoke word highlight</label>
         <div id="capList"></div>
-        <p class="hint">Note: no automatic speech-to-text — captions are manual or imported from SRT/VTT (the spec allows auto-captions only via an offline engine; none is bundled, so manual + SRT is the honest path).</p>
+        <p class="hint">Each caption row has its own start / end time and text — edit them inline. Captions render on the preview in sync with playback and are burned into the canvas export.</p>
       </div>
 
-      <!-- FILTERS -->
-      <div class="panel" id="tab-filters">
-        <h3>Video color presets</h3>
-        <div id="filterPresets" class="fx-grid"></div>
-        <p class="hint">Tap a preset to apply its colors to the video preview and export. Fine-tune in the right panel → Adjustment tab.</p>
-        <h3 style="margin-top:12px">Photo filters</h3>
-        <div id="photoFilters" class="fx-grid"></div>
-        <p class="hint">Photo filters apply to the photo canvas when Photo mode is active.</p>
+      <!-- AUDIO -->
+      <div class="panel" id="tab-audio">
+        <h3>Audio</h3>
+        <p class="hint">Full audio controls live in the right panel → Audio tab (volume, fades, pitch, EQ, effects, waveform). The buttons below are the same tools, one tap away.</p>
+        <div class="row"><button id="btnAudioOpen" class="mini wide"><span class="ico" data-ic="music"></span> Open Audio controls (right panel)</button></div>
+        <div class="row"><button id="btnAudioImport" class="mini wide">+ Import Audio</button><button id="btnAudioRecord" class="mini wide"><span class="ico" data-ic="mic"></span> Record Voice</button></div>
+        <div class="row"><button id="btnAudioSplit" class="mini">Split audio at playhead</button><button id="btnAudioMerge" class="mini">Merge audio with next</button></div>
+        <div class="row"><button id="btnAudioNorm" class="mini">Normalize (peak)</button><button id="btnAudioFxPrev" class="mini">Preview audio effects</button></div>
+        <div class="row"><button id="btnAudioSfx" class="mini wide">Built-in sound effects &amp; tones</button></div>
+        <p class="hint">Waveforms: audio clips on the timeline show their real decoded waveform once loaded; the Audio tab shows the full waveform of the imported audio track.</p>
       </div>
-
-      <!-- PHOTO -->
-      <div class="panel" id="tab-photo">
-        <h3>Photo Tools</h3>
-        <div class="row"><button id="btnImportPhoto" class="mini">+ Open Image</button><button id="btnPhotoPreset" class="mini">Poster / Thumbnail sizes</button></div>
-        <input type="file" id="photoInput" accept="image/*" hidden>
-        <label>Tool <select id="photoTool" class="fld"><option value="select">Select / Move layer</option><option value="brush">Brush</option><option value="eraser">Eraser</option><option value="picker">Color picker</option><option value="bucket">Paint bucket</option><option value="crop">Crop (drag on canvas)</option><option value="rectsel">Rect select → crop</option></select></label>
-        <label>Brush size <input type="range" id="brushSize" min="2" max="80" value="12"><span id="brushSizeV">12px</span></label>
-        <label>Brush color <input type="color" id="brushColor" value="#ff3366"></label>
-        <label>Brush opacity <input type="range" id="brushOp" min="10" max="100" value="100"><span id="brushOpV">100%</span></label>
-        <label>Straighten (°) <input type="range" id="straighten" min="-15" max="15" value="0"><span id="straightenV">0°</span></label>
-        <div class="row"><button id="btnRotL" class="mini">⟲ Rotate -90°</button><button id="btnRotR" class="mini">⟳ Rotate +90°</button><button id="btnFlipPhotoH" class="mini">⇄ Flip</button></div>
-        <label>Canvas size <select id="photoSize" class="fld"><option value="orig">Original</option><option value="1280x720">YouTube thumbnail 1280×720</option><option value="1080x1080">Instagram post 1080×1080</option><option value="1080x1920">Story / Reel 1080×1920</option><option value="1200x628">Facebook post 1200×628</option></select></label>
-        <h3 style="margin-top:12px">Layers</h3>
-        <div class="row">
-          <button id="btnAddTxtLayer" class="mini">+ Text</button><button id="btnAddShape" class="mini">+ Shape</button><button id="btnAddSticker" class="mini">+ Sticker</button><button id="btnAddImgLayer" class="mini">+ Image</button>
-        </div>
-        <input type="file" id="layerImgInput" accept="image/*" hidden>
-        <div id="layerList"></div>
-        <label>Selected layer opacity <input type="range" id="layerOp" min="0" max="100" value="100"><span id="layerOpV">100%</span></label>
-        <label>Blend mode <select id="layerBlend" class="fld"><option>source-over</option><option>multiply</option><option>screen</option><option>overlay</option><option>darken</option><option>lighten</option><option>color-dodge</option></select></label>
-        <div class="row"><button id="btnLayerUp" class="mini">↑ Up</button><button id="btnLayerDown" class="mini">↓ Down</button><button id="btnLayerDup" class="mini">⧉ Duplicate</button><button id="btnLayerDel" class="mini">🗑 Delete</button></div>
-        <h3 style="margin-top:12px">Photo Adjustments</h3>
-        <div id="photoAdjust"></div>
-        <p class="hint">Photo adjustments apply live to the photo canvas when Photo mode is active.</p>
+      <!-- ASSETS -->
+      <div class="panel" id="tab-assets">
+        <h3>Assets</h3>
+        <p class="hint">Stickers, shapes, backgrounds and built-in sounds — everything here adds a real clip to the timeline or opens the full library.</p>
+        <h3>Stickers</h3>
+        <p class="hint">Click a sticker — it adds an emoji text clip to the timeline at the playhead.</p>
+        <div id="stickerGrid" class="sticker-grid"></div>
+        <h3 style="margin-top:12px">Templates &amp; Assets library</h3>
+        <div class="row"><button id="btnAssetsTemplates" class="mini wide"><span class="ico" data-ic="sparkles"></span> Browse Templates &amp; Assets</button></div>
+        <div class="row"><button id="btnAssetsAudio" class="mini wide"><span class="ico" data-ic="music"></span> Built-in sound effects &amp; tones</button></div>
+        <p class="hint">Shapes and backgrounds live on the Templates screen — pick one there and it is added to the timeline as a real clip.</p>
       </div>
     </aside>
 
     <!-- CENTER : PLAYER -->
     <main id="center">
-      <div id="playerLabel">Player <span id="playerModeLabel">— Video Editor</span></div>
+      <div id="playerLabel">Player <span id="playerModeLabel">— Video Editor</span> <span id="monRes" title="Program monitor size">—</span></div>
       <div id="stageWrap">
         <div id="videoStage">
-          <video id="previewVideo" playsinline></video>
+          <video id="previewVideo" playsinline aria-hidden="true" tabindex="-1"></video>
           <canvas id="overlayCanvas"></canvas>
           <div id="textOverlay"></div>
-          <div id="stageEmpty">🎬 Import a video or photo to start editing.<br><span>Gallery (left) → Import, pick a file from your device, then “+ Timeline”.</span></div>
-        </div>
-        <div id="photoStage" hidden>
-          <canvas id="photoCanvas" width="960" height="540"></canvas>
-          <div id="photoHint">Open an image from the Photo panel to start.</div>
+          <div id="stageEmpty"><span class="ico" data-ic="clapperboard" data-ic-size="26"></span> Import a video or photo to start editing.<br><span>Gallery (left) → Import, pick a file from your device, then “+ Timeline”.</span></div>
+          <div id="safeOverlay" hidden><div class="safe-action" title="Action-safe area (90%)"></div><div class="safe-title" title="Title-safe area (80%)"></div></div>
         </div>
       </div>
       <div id="transport">
-        <button id="btnPlay" title="Play / Pause (Space)">▶ Play</button>
-        <button id="btnPrevFrame" title="Previous frame">⏮</button>
-        <button id="btnNextFrame" title="Next frame">⏭</button>
+        <button id="btnPlay" title="Play / Pause (Space)"><span class="ico" data-ic="play"></span> Play</button>
+        <button id="btnPrevFrame" title="Previous frame (←)"><span class="ico" data-ic="skip-back"></span> −1f</button>
+        <button id="btnNextFrame" title="Next frame (→)"><span class="ico" data-ic="skip-forward"></span> +1f</button>
         <span id="timeDisplay">00:00.0 / 00:00.0</span>
+        <span id="timecodeDisplay" title="Timecode HH:MM:SS:FF at the project frame rate">00:00:00:00</span>
+        <label title="Project frame rate — frame stepping and the timecode use this">FPS <select id="projFps"><option value="24">24</option><option value="25">25</option><option value="30" selected>30</option><option value="50">50</option><option value="60">60</option></select></label>
         <label>Vol <input type="range" id="volSlider" min="0" max="100" value="100" style="width:80px"></label>
         <label>Ratio <select id="ratioSel"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></label>
-        <button id="btnFull" title="Fullscreen">⛶ Full</button>
+        <button id="btnFull" title="Fullscreen"><span class="ico" data-ic="maximize"></span> Full</button>
+        <button id="btnSafeAreas" title="Toggle safe-area guides (action-safe 90% / title-safe 80%)"><span class="ico" data-ic="frame"></span> Safe Areas</button>
+        <button id="btnTogglePanels" class="mini panels-toggle" title="Show / hide the side panels"><span class="ico" data-ic="panel-bottom"></span> Panels</button>
       </div>
       <div id="trimBar">
         <label>Trim in <input type="number" id="trimIn" value="0" min="0" step="0.1"> s</label>
@@ -231,43 +709,70 @@
         <label>Position Y <input type="number" id="inspPosY" class="fld" value="0" step="5"> px</label>
         <label>Rotate <input type="range" id="inspRot" min="-180" max="180" value="0"><span id="inspRotV">0°</span></label>
         <div class="row" id="alignRow">
-          <button class="mini" data-align="left" title="Move left">⇤ Left</button>
-          <button class="mini" data-align="center" title="Center">⊙ Center</button>
-          <button class="mini" data-align="right" title="Move right">⇥ Right</button>
-          <button class="mini" data-align="top" title="Move up">⇧ Top</button>
-          <button class="mini" data-align="middle" title="Middle">— Middle</button>
-          <button class="mini" data-align="bottom" title="Move down">⇩ Bottom</button>
+          <button class="mini" data-align="left" title="Move left"><span class="ico" data-ic="align-left"></span> Left</button>
+          <button class="mini" data-align="center" title="Center"><span class="ico" data-ic="align-center"></span> Center</button>
+          <button class="mini" data-align="right" title="Move right"><span class="ico" data-ic="align-right"></span> Right</button>
+          <button class="mini" data-align="top" title="Move up"><span class="ico" data-ic="arrow-up"></span> Top</button>
+          <button class="mini" data-align="middle" title="Middle"><span class="ico" data-ic="minus"></span> Middle</button>
+          <button class="mini" data-align="bottom" title="Move down"><span class="ico" data-ic="arrow-down"></span> Bottom</button>
         </div>
+        <h3 style="margin-top:14px">Crop</h3>
+        <label>Crop ratio <select id="cropRatio" class="fld"><option value="free">Free</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></label>
+        <label>Crop zoom <input type="range" id="cropZoom" min="25" max="200" value="100"><span id="cropZoomV">100%</span></label>
+        <p class="hint">Crop ratio + zoom apply to the preview and to both export paths.</p>
         <label><input type="checkbox" id="inspBlendOn"> Blend</label>
         <label>Blend mode <select id="inspBlendMode" class="fld"><option value="normal">Normal</option><option value="screen">Screen</option><option value="multiply">Multiply</option><option value="overlay">Overlay</option><option value="lighten">Lighten</option></select></label>
         <h3 style="margin-top:14px">Clip details</h3>
-        <p class="hint">Select a clip on the timeline to edit its properties here.</p>
+        <p class="hint">Select a clip on the timeline to edit its properties here. Drag a clip up/down between the V1 / V2 / A1 / A2 tracks, or drag its edges to trim.</p>
         <div id="clipProps" hidden>
           <label>Name <input id="clipName" class="fld"></label>
           <label>Start (s) <input type="number" id="clipStart" class="fld" step="0.1"></label>
-          <label>Duration (s) <input type="number" id="clipDur" class="fld" step="0.1" min="0.1"></label>
+          <label>Duration (s) <input type="number" id="clipDur" class="fld" step="0.1" min="0.1" title="New duration in seconds — video/audio clips are clamped to their source length; text and image clips accept any duration"></label>
           <label>Opacity <input type="range" id="clipOpacity" min="0" max="100" value="100"><span id="clipOpacityV">100%</span></label>
           <label>Scale % <input type="range" id="clipScale" min="25" max="200" value="100"><span id="clipScaleV">100%</span></label>
           <label>Rotation ° <input type="range" id="clipRot" min="-180" max="180" value="0"><span id="clipRotV">0°</span></label>
           <div class="row"><button id="btnClipApply" class="mini wide">Apply to clip</button></div>
         </div>
+        <h3 style="margin-top:14px">Effect parameters (selected clip)</h3>
+        <p class="hint">Effects on the selected clip, with a strength slider each. Changing a slider re-renders the preview; effects are stored on the clip and travel with split / duplicate / copy-paste.</p>
+        <div id="inspFxParams"><p class="hint">Select a clip with effects to see its parameters here.</p></div>
       </div>
 
       <!-- AUDIO TAB -->
       <div class="ipanel" id="itab-audio">
         <h3>Audio</h3>
-        <div class="row"><button id="btnImportAudio" class="mini">+ Import Audio</button><button id="btnRecord" class="mini">🎙 Record Voice</button><button id="btnStopRec" class="mini" disabled>■ Stop</button></div>
+        <div class="row"><button id="btnImportAudio" class="mini">+ Import Audio</button><button id="btnRecord" class="mini"><span class="ico" data-ic="mic"></span> Record Voice</button><button id="btnStopRec" class="mini" disabled><span class="ico" data-ic="stop"></span> Stop</button></div>
         <input type="file" id="audioInput" accept="audio/*" hidden>
         <label>Music volume <input type="range" id="audVol" min="0" max="100" value="80"><span id="audVolV">80%</span></label>
         <label>Video volume <input type="range" id="vidVol" min="0" max="100" value="100"><span id="vidVolV">100%</span></label>
         <label>Fade in (s) <input type="range" id="audFadeIn" min="0" max="5" step="0.5" value="0"><span id="audFadeInV">0s</span></label>
         <label>Fade out (s) <input type="range" id="audFadeOut" min="0" max="5" step="0.5" value="0"><span id="audFadeOutV">0s</span></label>
-        <div class="row"><button id="btnMute" class="mini">🔇 Mute all</button><button id="btnDuck" class="mini">🦆 Duck music under voice</button></div>
+        <div class="row"><button id="btnMute" class="mini"><span class="ico" data-ic="volume-x"></span> Mute all</button><button id="btnDuck" class="mini"><span class="ico" data-ic="volume-1"></span> Duck music under voice</button></div>
+        <h3 style="margin-top:10px">Audio clips (selected audio clip)</h3>
+        <div class="row"><button id="btnSplitAudio" class="mini"><span class="ico" data-ic="scissors"></span> Split audio at playhead</button><button id="btnMergeAudio" class="mini"><span class="ico" data-ic="link"></span> Merge audio with next</button></div>
+        <div class="row"><button id="btnNudgeAudioL" class="mini"><span class="ico" data-ic="arrow-left"></span> Nudge −1 frame</button><button id="btnNudgeAudioR" class="mini"><span class="ico" data-ic="arrow-right"></span> Nudge +1 frame</button><button id="btnTrimAudio" class="mini"><span class="ico" data-ic="scissors"></span> Trim audio to trim bars</button></div>
+        <label>Pitch (semitones) <input type="range" id="audPitch" min="-12" max="12" value="0"><span id="audPitchV">0 st</span></label>
+        <label>Clip speed <input type="range" id="audClipSpeed" min="25" max="200" value="100"><span id="audClipSpeedV">1.00×</span></label>
+        <div class="row"><button id="btnReverseAudio" class="mini"><span class="ico" data-ic="rewind"></span> Reverse audio clip</button><button id="btnNormalizeAudio" class="mini"><span class="ico" data-ic="bar-chart"></span> Normalize (peak)</button></div>
+        <label>Channels <select id="audStereo" class="fld"><option value="stereo">Stereo</option><option value="mono">Mono</option></select></label>
+        <label>Balance (pan) <input type="range" id="audPan" min="-100" max="100" value="0"><span id="audPanV">Center</span></label>
+        <p class="hint">Pitch: preview plays at the shifted pitch (speed follows pitch in preview); the Video Engine export preserves the clip length with resampling, the Canvas export plays the shifted pitch. Reverse: true reverse in the Video Engine export; the Canvas export reverses the audio buffer on-device before recording. Normalize measures the real peak and sets the clip gain so the peak hits −1 dB.</p>
+        <h3 style="margin-top:10px">Audio effects (applies to audio clips)</h3>
+        <p class="hint">Every effect below is a real Web Audio node in the preview / Canvas-export chain, and a real FFmpeg audio filter in the Video Engine export. Tap ▶ to hear one effect on the selected audio clip. Noise reduction is a traditional gate + high-pass, not AI.</p>
+        <div id="audioFxPanel"></div>
+        <div class="row"><button id="btnPreviewAudioFx" class="mini wide"><span class="ico" data-ic="play"></span> Preview selected audio with effects</button></div>
+        <div class="row"><button id="btnFxAudioClear" class="mini"><span class="ico" data-ic="x"></span> Clear audio effects</button></div>
+        <h3 style="margin-top:10px">Sound effects (built-in, synthesized)</h3>
+        <p class="hint">Synthesized on your device with Web Audio oscillators / noise — no licensed music, no downloads. ▶ previews, + Timeline adds it as an audio clip.</p>
+        <div id="sfxGrid" class="fx-grid"></div>
+        <h3 style="margin-top:10px">Background music (built-in tones)</h3>
+        <p class="hint">Short synthesized loops made on-device (pad / arpeggio / drone) — labelled as built-in tones, not real songs.</p>
+        <div id="bgmGrid" class="fx-grid"></div>
         <label>Bass <input type="range" id="audBass" min="-12" max="12" value="0"><span id="audBassV">0 dB</span></label>
         <label>Treble <input type="range" id="audTreble" min="-12" max="12" value="0"><span id="audTrebleV">0 dB</span></label>
-        <label>Playback speed <select id="audSpeed" class="fld"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+        <label>Playback speed <select id="audSpeed" class="fld"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
         <canvas id="waveCanvas" width="260" height="60" style="width:100%;background:#0d1330;border-radius:8px"></canvas>
-        <p class="hint">Waveform shows the imported audio track. “Extract audio” is the video’s own sound — use Video volume above.</p>
+        <p class="hint">Waveform shows the real audio peaks of the imported audio track (decoded on your device). Bass / treble use a live Web Audio equalizer on the preview; fades and ducking apply to audio-track clips in the export mix.</p>
       </div>
 
       <!-- SPEED TAB -->
@@ -275,18 +780,39 @@
         <h3>Speed</h3>
         <label>Playback speed <select id="speedSel" class="fld"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
         <label>Selected clip speed <input type="range" id="clipSpeed" min="25" max="200" value="100"><span id="clipSpeedV">1.00×</span></label>
-        <p class="hint">Clip speed changes the selected video clip’s length on the timeline (faster = shorter). Select a video clip first. Preview playback speed is the dropdown above.</p>
+        <p class="hint">Clip speed 0.25×–2× changes the selected video clip’s length on the timeline (faster = shorter). Select a video clip first. Preview playback speed is the dropdown above.</p>
+        <h3 style="margin-top:10px">Speed ramp (speed keyframes)</h3>
+        <p class="hint">Speed varies over the clip: add a keyframe at an offset inside the selected clip with a speed, and playback ramps between keyframes. Renders in the preview and in the Canvas export; the Video Engine export lists it as skipped (it cannot vary speed inside one re-encoded clip).</p>
+        <div class="row"><input type="number" id="speedKfAt" class="fld" value="0" min="0" step="0.1" style="flex:1" title="Offset inside the clip (s)"><input type="number" id="speedKfVal" class="fld" value="1" min="0.25" max="4" step="0.25" style="flex:1" title="Speed at this point (×)"><button id="btnAddSpeedKf" class="mini">+ Speed keyframe</button></div>
+        <div id="speedKfList"></div>
+        <h3 style="margin-top:10px">Time remapping</h3>
+        <p class="hint">Map output time → source time inside the selected clip. Add points (output s, source s); playback follows the line between them. Overrides the speed ramp while it has 2+ points.</p>
+        <div class="row"><input type="number" id="tmOut" class="fld" value="0" min="0" step="0.1" style="flex:1" title="Output time (s)"><input type="number" id="tmSrc" class="fld" value="0" min="0" step="0.1" style="flex:1" title="Source time (s)"><button id="btnAddTimeMap" class="mini">+ Time-map point</button></div>
+        <div id="timeMapList"></div>
+        <h3 style="margin-top:10px">Frame hold</h3>
+        <p class="hint">Hold one frame still for N seconds inside the selected clip (the picture freezes, the timeline keeps running).</p>
+        <div class="row"><input type="number" id="holdAt" class="fld" value="0" min="0" step="0.1" style="flex:1" title="Hold starts at offset (s)"><input type="number" id="holdDur" class="fld" value="1" min="0.1" max="10" step="0.1" style="flex:1" title="Hold length (s)"><button id="btnApplyHold" class="mini"><span class="ico" data-ic="snowflake"></span> Hold frame</button><button id="btnClearHold" class="mini"><span class="ico" data-ic="x"></span> Clear</button></div>
+        <label><input type="checkbox" id="motionBlurOn"> Motion blur (Canvas export — blends the previous frame on fast moves)</label>
+        <p class="hint">Optical flow is NOT included: true frame interpolation needs a frame-interpolation engine this build does not have (see PHASE4_REPORT.md).</p>
       </div>
 
       <!-- ANIMATION TAB -->
       <div class="ipanel" id="itab-animation">
         <h3>Animation</h3>
-        <label>Text animation <select id="txtAnim" class="fld"><option value="none">None</option><option value="fade">Fade in</option><option value="slide">Slide up</option><option value="pop">Pop</option></select></label>
-        <p class="hint">Applies to text clips you add from the Text panel.</p>
+        <label>Text animation <select id="txtAnim" class="fld"><option value="none">None</option><option value="fade">Fade in</option><option value="slide">Slide up</option><option value="pop">Pop</option><option value="typewriter">Typewriter</option><option value="letter">Letter by letter</option><option value="word">Word by word</option><option value="zoom">Zoom in</option><option value="bounce">Bounce</option><option value="rotate">Rotate in</option><option value="flip">Flip in</option><option value="glitch">Glitch</option><option value="wave">Wave</option><option value="mask">Mask reveal</option></select></label>
+        <p class="hint">Applies to text clips you add from the Text panel. Every animation really animates in the preview and in the Canvas export (driven by the clip's own clock, not a CSS class).</p>
+        <h3 style="margin-top:12px">Animation presets (keyframes)</h3>
+        <p class="hint">Applies real keyframes to the selected clip starting at the playhead — Position, Scale, Rotation, Opacity, Zoom, Pan, Bounce, Shake, Swing, Pulse, Pop In/Out, Fade In/Out, Slide In/Out, Rotate In/Out, Elastic, Spring, Overshoot.</p>
+        <div class="row"><select id="animPreset" class="fld" style="flex:1"></select><button id="btnApplyAnimPreset" class="mini"><span class="ico" data-ic="play"></span> Apply preset</button></div>
         <h3 style="margin-top:12px">Keyframes</h3>
         <div class="row"><button id="btnAddKF" class="mini">+ Keyframe at playhead</button><button id="btnDelKF" class="mini">Delete selected</button></div>
-        <label>Property <select id="kfProp" class="fld"><option value="opacity">Opacity</option><option value="scale">Scale</option><option value="posX">Position X</option><option value="posY">Position Y</option></select></label>
+        <label>Property <select id="kfProp" class="fld"><option value="opacity">Opacity</option><option value="scale">Scale</option><option value="posX">Position X</option><option value="posY">Position Y</option><option value="rotation">Rotation</option></select></label>
         <label>Value <input type="range" id="kfVal" min="0" max="200" value="100"><span id="kfValV">100</span></label>
+        <label>Easing (for the new keyframe) <select id="kfEase" class="fld"><option value="linear">Linear</option><option value="easeIn">Ease In</option><option value="easeOut">Ease Out</option><option value="easeInOut">Ease In-Out</option><option value="bezier">Custom Bezier (below)</option></select></label>
+        <h3 style="margin-top:10px">Bezier curve editor (per keyframe segment)</h3>
+        <p class="hint">Drag the two control dots — touch works. Applies to the selected keyframe's segment (the easing after it). The curve is the easing: left dot pulls the start, right dot pulls the end.</p>
+        <canvas id="bezierCanvas" width="260" height="120" style="width:100%;background:#0d1330;border-radius:8px;touch-action:none"></canvas>
+        <div class="row"><button id="btnKfCopy" class="mini"><span class="ico" data-ic="copy"></span> Copy keyframe</button><button id="btnKfPaste" class="mini"><span class="ico" data-ic="clipboard"></span> Paste keyframe</button><button id="btnKfDelete" class="mini"><span class="ico" data-ic="trash"></span> Delete selected</button></div>
         <div id="kfList"></div>
       </div>
 
@@ -296,45 +822,97 @@
         <div id="colorSliders"></div>
         <h3 style="margin-top:12px">Presets</h3>
         <div id="presetList" class="fx-grid"></div>
-        <div class="row"><button id="btnSavePreset" class="mini">💾 Save custom preset</button><button id="btnResetColor" class="mini">Reset color</button></div>
+        <div class="row"><button id="btnSavePreset" class="mini"><span class="ico" data-ic="save"></span> Save custom preset</button><button id="btnResetColor" class="mini">Reset color</button></div>
+        <h3 style="margin-top:14px">RGB Curves (tap / drag a point — touch works)</h3>
+        <p class="hint">Drag the points on the curve to remap tones. Tap the curve to add a point; tap a point twice to remove it. Applies to the Canvas export (real pixel math) and the Video Engine export (FFmpeg curves filter). Preview: see the graded still frame below.</p>
+        <div class="row" id="curveChanRow">
+          <button class="mini on" data-curve="rgb">RGB</button><button class="mini" data-curve="r">Red</button><button class="mini" data-curve="g">Green</button><button class="mini" data-curve="b">Blue</button>
+          <button class="mini" id="btnCurveReset">Reset curve</button>
+        </div>
+        <canvas id="curveCanvas" width="260" height="200" style="width:100%;background:#0d1330;border-radius:8px;touch-action:none"></canvas>
+        <h3 style="margin-top:12px">HSL</h3>
+        <label>Hue shift <input type="range" id="hslHue" min="-180" max="180" value="0"><span id="hslHueV">0°</span></label>
+        <label>Saturation <input type="range" id="hslSat" min="-100" max="100" value="0"><span id="hslSatV">0</span></label>
+        <label>Lightness <input type="range" id="hslLight" min="-100" max="100" value="0"><span id="hslLightV">0</span></label>
+        <h3 style="margin-top:12px">Color Wheels (shadows / midtones / highlights)</h3>
+        <p class="hint">Drag the dot in a wheel to push that tonal range toward a colour; the slider under it sets how strong the push is.</p>
+        <div class="row">
+          <div style="flex:1;text-align:center"><canvas class="wheelCanvas" id="wheelSh" width="90" height="90" style="touch-action:none"></canvas><br><span style="font-size:11px">Shadows</span><input type="range" id="wheelShAmt" min="0" max="100" value="50"></div>
+          <div style="flex:1;text-align:center"><canvas class="wheelCanvas" id="wheelMid" width="90" height="90" style="touch-action:none"></canvas><br><span style="font-size:11px">Midtones</span><input type="range" id="wheelMidAmt" min="0" max="100" value="50"></div>
+          <div style="flex:1;text-align:center"><canvas class="wheelCanvas" id="wheelHi" width="90" height="90" style="touch-action:none"></canvas><br><span style="font-size:11px">Highlights</span><input type="range" id="wheelHiAmt" min="0" max="100" value="50"></div>
+        </div>
+        <h3 style="margin-top:12px">Color Balance</h3>
+        <label>Red <input type="range" id="balR" min="-100" max="100" value="0"><span id="balRV">0</span></label>
+        <label>Green <input type="range" id="balG" min="-100" max="100" value="0"><span id="balGV">0</span></label>
+        <label>Blue <input type="range" id="balB" min="-100" max="100" value="0"><span id="balBV">0</span></label>
+        <h3 style="margin-top:12px">LUT (.cube)</h3>
+        <p class="hint">Import a .cube LUT file — parsed on your device, never uploaded. Applies to the Canvas export (trilinear interpolation) and the Video Engine export (FFmpeg lut3d). The LUT file itself is not saved with the project: re-import it after reopening (the name is remembered).</p>
+        <div class="row"><button id="btnImportLUT" class="mini"><span class="ico" data-ic="upload"></span> Import .cube LUT</button><button id="btnClearLUT" class="mini"><span class="ico" data-ic="x"></span> Remove LUT</button></div>
+        <input type="file" id="lutInput" accept=".cube" hidden>
+        <p class="hint" id="lutName">No LUT loaded.</p>
+        <label>LUT intensity <input type="range" id="lutIntensity" min="0" max="100" value="100"><span id="lutIntensityV">100%</span></label>
+        <h3 style="margin-top:12px">Grade preview (still frame)</h3>
+        <p class="hint">Curves, HSL, wheels, balance and LUT cannot be shown through the live video element, so this still frame shows the real graded pixels (same math as the Canvas export). Tap Refresh after changing a control.</p>
+        <canvas id="gradeThumb" width="260" height="146" style="width:100%;background:#000;border-radius:8px"></canvas>
+        <div class="row"><button id="btnGradeThumb" class="mini"><span class="ico" data-ic="refresh-cw"></span> Refresh grade preview</button></div>
       </div>
     </aside>
   </div>
 
-  <!-- ============ BOTTOM TIMELINE ============ -->
+  <!-- ============ BOTTOM TIMELINE (V1 / V2 / Text / A1 / A2) ============ -->
   <section id="timelineSection">
     <div id="tlHead">
-      <button id="btnSelectTool" class="mini on" title="Select tool">➤ Select</button>
-      <button id="btnUndo" class="mini" title="Undo (Ctrl+Z)">↩ Undo</button>
-      <button id="btnRedo" class="mini" title="Redo (Ctrl+Y)">↪ Redo</button>
+      <button id="btnSelectTool" class="mini on" title="Select tool"><span class="ico" data-ic="mouse-pointer"></span> Select</button>
+      <button id="btnUndo" class="mini" title="Undo (Ctrl+Z)"><span class="ico" data-ic="undo"></span> Undo</button>
+      <button id="btnRedo" class="mini" title="Redo (Ctrl+Y)"><span class="ico" data-ic="redo"></span> Redo</button>
       <span class="tb-sep"></span>
-      <button id="btnSplit" class="mini" title="Split clip at playhead (S)">✂ Split</button>
-      <button id="btnDupClip" class="mini" title="Duplicate selected clip">⧉ Duplicate</button>
-      <button id="btnDelClip" class="mini" title="Delete selected clip (Del)">🗑 Delete</button>
-      <button id="btnTrimApply" class="mini" title="Apply trim in/out to selected clip">✂ Apply Trim</button>
+      <button id="btnSplit" class="mini" title="Split clip at playhead (S)"><span class="ico" data-ic="scissors"></span> Split</button>
+      <button id="btnCut" class="mini" title="Cut: split at playhead and delete the part after it"><span class="ico" data-ic="scissors"></span> Cut</button>
+      <button id="btnMerge" class="mini" title="Merge selected clip with the next adjacent clip of the same source"><span class="ico" data-ic="link"></span> Merge</button>
+      <button id="btnDupClip" class="mini" title="Duplicate selected clip"><span class="ico" data-ic="copy"></span> Duplicate</button>
+      <button id="btnDelClip" class="mini" title="Delete selected clip (Del) — closes the gap (ripple)"><span class="ico" data-ic="trash"></span> Delete</button>
+      <button id="btnRippleDelete" class="mini" title="Ripple delete: delete the selected clip and close the gap"><span class="ico" data-ic="arrow-left"></span> Ripple Delete</button>
+      <button id="btnRippleAll" class="mini" title="Ripple scope: tap to switch between same-track only and all tracks">Ripple: Same track</button>
       <span class="tb-sep"></span>
-      <button id="btnSnap" class="mini" title="Snap toggle">🧲 Snap: On</button>
+      <select id="insertMediaSel" class="fld tl-select" title="Media to insert at the playhead"><option value="">— Insert: pick media —</option></select>
+      <button id="btnInsertAtPlayhead" class="mini" title="Insert the picked media at the playhead — later clips on the target track shift right, nothing is overwritten"><span class="ico" data-ic="arrow-right"></span> Insert at Playhead</button>
+      <select id="replaceMediaSel" class="fld tl-select" title="Media to replace the selected clip with (same position and duration)"><option value="">— Replace with: pick media —</option></select>
+      <button id="btnReplaceClip" class="mini" title="Replace the selected clip with the picked media, keeping its position and duration"><span class="ico" data-ic="refresh-cw"></span> Replace Clip</button>
+      <button id="btnTrimApply" class="mini" title="Apply trim in/out to selected clip"><span class="ico" data-ic="scissors"></span> Apply Trim</button>
+      <span class="tb-sep"></span>
+      <button id="btnSnap" class="mini" title="Snap toggle"><span class="ico" data-ic="magnet"></span> Snap: On</button>
       <label>Zoom <input type="range" id="tlZoom" min="40" max="300" value="100"></label>
       <button id="btnAddTrack" class="mini">+ Text track clip</button>
+      <button id="btnTlExpand" class="mini" title="Expand / collapse the timeline (mobile: full height)"><span class="ico" data-ic="maximize"></span> Expand</button>
+      <span class="tb-sep"></span>
+      <button id="btnAddMarker" class="mini" title="Add marker at playhead (M)"><span class="ico" data-ic="map-pin"></span> Marker</button>
       <span id="tlInfo" class="hint"></span>
+    </div>
+    <div id="markerRow" class="marker-row"><span class="hint">No markers yet — press M or the Marker button to add one at the playhead.</span></div>
+    <div id="kfLaneWrap" style="padding:4px 12px;background:var(--panel);border-bottom:1px solid var(--line)">
+      <div style="font-size:11px;color:var(--mut)">Keyframes <span id="kfLaneHint">— select a clip, add a keyframe in the Animation tab; drag a ◆ to move it, tap to select it.</span></div>
+      <div id="kfLane" style="position:relative;height:34px;overflow-x:auto;background:var(--panel2);border-radius:6px;margin-top:4px"></div>
     </div>
     <div id="timeline">
       <div class="track-labels">
-        <div class="tlabel">🎬 Video <span><button class="tvis" data-track="video" title="Show/hide track">👁</button><button class="tlk" data-track="video" title="Lock track">🔓</button></span></div>
-        <div class="tlabel">✏️ Text <span><button class="tvis" data-track="text" title="Show/hide track">👁</button><button class="tlk" data-track="text" title="Lock track">🔓</button></span></div>
-        <div class="tlabel">🎵 Audio <span><button class="tvis" data-track="audio" title="Show/hide track">👁</button><button class="tlk" data-track="audio" title="Lock track">🔓</button></span></div>
-        <div class="tlabel" id="tlabelPhoto" hidden>🖼️ Photo <span><button class="tvis" data-track="photo" title="Show/hide track">👁</button></span></div>
+        <div class="tlabel"><span class="ico" data-ic="film"></span> V1 <span><button class="tvis" data-track="v1" title="Show/hide track" aria-label="Show or hide track V1"><span class="ico" data-ic="eye"></span></button><button class="tmute" data-track="v1" title="Mute track" aria-label="Mute track V1"><span class="ico" data-ic="volume-1"></span></button><button class="tlk" data-track="v1" title="Lock track" aria-label="Lock track V1"><span class="ico" data-ic="unlock"></span></button></span></div>
+        <div class="tlabel"><span class="ico" data-ic="film"></span> V2 · Overlay <span><button class="tvis" data-track="v2" title="Show/hide track" aria-label="Show or hide track V2"><span class="ico" data-ic="eye"></span></button><button class="tmute" data-track="v2" title="Mute track" aria-label="Mute track V2"><span class="ico" data-ic="volume-1"></span></button><button class="tlk" data-track="v2" title="Lock track" aria-label="Lock track V2"><span class="ico" data-ic="unlock"></span></button></span></div>
+        <div class="tlabel"><span class="ico" data-ic="type"></span> Text <span><button class="tvis" data-track="text" title="Show/hide track" aria-label="Show or hide text track"><span class="ico" data-ic="eye"></span></button><button class="tmute" data-track="text" title="Mute track" aria-label="Mute track TEXT"><span class="ico" data-ic="volume-1"></span></button><button class="tlk" data-track="text" title="Lock track" aria-label="Lock text track"><span class="ico" data-ic="unlock"></span></button></span></div>
+        <div class="tlabel"><span class="ico" data-ic="music"></span> A1 <span><button class="tvis" data-track="a1" title="Show/hide track" aria-label="Show or hide track A1"><span class="ico" data-ic="eye"></span></button><button class="tmute" data-track="a1" title="Mute track" aria-label="Mute track A1"><span class="ico" data-ic="volume-1"></span></button><button class="tlk" data-track="a1" title="Lock track" aria-label="Lock track A1"><span class="ico" data-ic="unlock"></span></button></span></div>
+        <div class="tlabel"><span class="ico" data-ic="music"></span> A2 <span><button class="tvis" data-track="a2" title="Show/hide track" aria-label="Show or hide track A2"><span class="ico" data-ic="eye"></span></button><button class="tmute" data-track="a2" title="Mute track" aria-label="Mute track A2"><span class="ico" data-ic="volume-1"></span></button><button class="tlk" data-track="a2" title="Lock track" aria-label="Lock track A2"><span class="ico" data-ic="unlock"></span></button></span></div>
       </div>
       <div id="tlScroll">
         <div id="tlRuler"></div>
         <div id="playhead"></div>
-        <div class="track" id="trackVideo"></div>
-        <div class="track" id="trackText"></div>
-        <div class="track" id="trackAudio"></div>
-        <div class="track" id="trackPhoto" hidden></div>
+        <div class="track" id="trackV1" data-track="v1"></div>
+        <div class="track" id="trackV2" data-track="v2"></div>
+        <div class="track" id="trackText" data-track="text"></div>
+        <div class="track" id="trackA1" data-track="a1"></div>
+        <div class="track" id="trackA2" data-track="a2"></div>
       </div>
     </div>
   </section>
+  <nav id="mobileNav" class="appnav" data-nav aria-label="App sections"></nav>
 </div>
 
 <!-- RIGHT-CLICK CONTEXT MENU -->
@@ -344,82 +922,61 @@
 <!-- EXPORT MODAL -->
 <div id="exportModal" class="modal" hidden>
   <div class="modal-box">
-    <h2>⬇ Export Center</h2>
+    <h2><span class="ico" data-ic="download" data-ic-size="20"></span> Export Center</h2>
+    <div class="modal-body">
     <div id="exportVideoOpts">
-      <label>Resolution <select id="expRes" class="fld"><option value="480">480p (854×480)</option><option value="720">720p HD (1280×720)</option><option value="1080" selected>1080p Full HD (1920×1080)</option><option value="1440">2K (2560×1440)</option><option value="2160">4K (3840×2160) *</option></select></label>
+      <label>Export engine <select id="expEngine" class="fld">
+        <option value="auto" selected>Auto — Video Engine (FFmpeg) if available, else Canvas</option>
+        <option value="ffmpeg">Video Engine (FFmpeg.wasm) — real MP4 re-encode</option>
+        <option value="canvas">Canvas + WebCodecs (on-device, no download)</option>
+      </select></label>
+      <p class="hint" id="expNote">Video Engine (FFmpeg.wasm) loads from the app itself the first time and re-encodes a real MP4 with trim, speed, color, filters, curves, LUT and true reverse — plus the fade-family transitions (Fade, Fade Black/White, Dissolve, Cross Dissolve, Film Dissolve). Text, captions, V2 overlays, other transitions, effects, HSL and color wheels are burned in by the Canvas export instead; the FFmpeg path lists anything it skips. If the engine cannot load, the Canvas export runs instead and the result says why. The Canvas path renders each frame on a canvas and encodes it with WebCodecs into a real file with exact timestamps, so slow effects only make the export take longer — the file always comes out at the requested fps and duration. Before rendering it proves the codec really works on this browser (H.264 → VP9 → VP8, AAC → Opus) and names the codec it actually used — on browsers without H.264/AAC (for example Linux Chrome) it writes VP9 + Opus instead. If this browser has no video encoder at all, it says so before rendering and points at the Video Engine. No watermark is ever added.</p>
+      <label>Export preset <select id="expPreset" class="fld"><option value="">— Choose a preset —</option></select></label>
+      <div class="row"><input id="expPresetName" class="fld" placeholder="Preset name…" style="flex:1"><button id="btnSaveExpPreset" class="mini"><span class="ico" data-ic="save"></span> Save current settings as preset</button></div>
+      <label>Resolution <select id="expRes" class="fld"><option value="480">480p (854×480)</option><option value="720">720p HD (1280×720)</option><option value="1080" selected>1080p Full HD (1920×1080)</option><option value="1440">2K (2560×1440)</option><option value="2160">4K (3840×2160) *</option><option value="custom">Custom…</option></select></label>
+      <div class="row" id="expCustomRow" hidden>
+        <label>Custom width <input type="number" id="expCustomW" class="fld" style="width:100px" value="1280" min="16" max="4096" step="2"></label>
+        <label>Custom height <input type="number" id="expCustomH" class="fld" style="width:100px" value="720" min="16" max="4096" step="2"></label>
+        <span class="hint">Width × height, 16–4096 each (even numbers work best).</span>
+      </div>
       <label>FPS <select id="expFps" class="fld"><option>24</option><option>25</option><option selected>30</option><option>50</option><option>60</option></select></label>
-      <label>Format <select id="expFmt" class="fld"><option value="webm">WebM (widely supported)</option><option value="mp4">MP4 (if browser supports it, else WebM)</option></select></label>
-      <label>Bitrate <select id="expBitrate" class="fld"><option value="2500000">Low — 2.5 Mbps</option><option value="5000000" selected>Medium — 5 Mbps</option><option value="10000000">High — 10 Mbps</option><option value="20000000">Very high — 20 Mbps</option></select></label>
-      <p class="hint">* 4K/2K render at the maximum canvas size your device/browser supports; if the device cannot do it, export falls back to 1080p and tells you. Reverse is exported forward (see Effects panel). No watermark is ever added.</p>
+      <label>Format <select id="expFmt" class="fld"><option value="mp4">MP4</option><option value="webm">WebM (canvas path)</option></select></label>
+      <label>Codec <select id="expCodec" class="fld"><option value="h264" selected>H.264 (default)</option></select></label>
+      <p class="hint" id="expCodecNote">H.265 (HEVC) is shown here only if this browser / the Video Engine actually supports it — it is tested when the dialog opens. If it is not listed, H.265 is not available on this device and H.264 is used instead.</p>
+      <label>Bitrate <select id="expBitrate" class="fld"><option value="2500000">Low — 2.5 Mbps</option><option value="5000000" selected>Medium — 5 Mbps</option><option value="10000000">High — 10 Mbps</option><option value="20000000">Very high — 20 Mbps</option><option value="custom">Custom…</option></select></label>
+      <div class="row" id="expBitrateRow" hidden>
+        <label>Custom bitrate (Mbps) <input type="number" id="expBitrateCustom" class="fld" style="width:100px" value="8" min="0.5" max="50" step="0.5"></label>
+        <span class="hint">0.5–50 Mbps.</span>
+      </div>
+      <p class="hint">* 4K/2K render at the maximum canvas size your device/browser supports; if the device cannot do it, export falls back to 1080p and tells you. Reversed clips export forward in the Canvas path (see Effects panel). No watermark is ever added.</p>
     </div>
-    <div id="exportPhotoOpts" hidden>
-      <label>Format <select id="expPhotoFmt" class="fld"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
-      <label>Quality <input type="range" id="expPhotoQ" min="10" max="100" value="92"><span id="expPhotoQV">92%</span></label>
-      <label>Width (px, 0 = current) <input type="number" id="expPhotoW" class="fld" value="0" min="0"></label>
-      <label><input type="checkbox" id="expPhotoTrans"> Transparent background (PNG only — flattens layers onto transparent canvas)</label>
+    <div class="row"><button id="btnExportFrameModal" class="mini"><span class="ico" data-ic="camera"></span> Export current frame as image (PNG/JPG/WebP)</button>
+      <label style="margin:0">Frame format <select id="frameFmtModal" class="fld" style="width:auto"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
     </div>
-    <div class="row"><button id="btnDoExport" class="btn">▶ Start Export</button><button id="btnCancelExport" class="mini" disabled>Cancel</button><button id="btnCloseExport" class="mini">Close</button></div>
+    </div>
+    <div class="modal-foot">
+    <div class="row"><button id="btnDoExport" class="btn"><span class="ico" data-ic="play"></span> Start Export</button><button id="btnAddToQueue" class="mini">+ Add to queue</button><button id="btnCancelExport" class="mini" disabled>Cancel</button><button id="btnCloseExport" class="mini">Close</button></div>
     <div id="expProgress" hidden><div id="expBar"><div id="expFill"></div></div><span id="expPct">0%</span><span id="expStatus"></span></div>
     <div id="expResult"></div>
-  </div>
-</div>
-
-<!-- PROJECTS MODAL -->
-<div id="projectsModal" class="modal" hidden>
-  <div class="modal-box">
-    <h2>📁 Projects</h2>
-    <div class="row"><button id="btnNewProject" class="mini">+ New Project</button><button id="btnSaveProject" class="mini">💾 Save Now</button><button id="btnExportProj" class="mini">⬇ Backup (JSON)</button><button id="btnImportProj" class="mini">⬆ Restore (JSON)</button></div>
-    <input type="file" id="projInput" accept=".json" hidden>
-    <div id="projectList"></div>
-    <div class="row"><button id="btnCloseProjects" class="mini">Close</button></div>
-  </div>
-</div>
-
-<!-- TEMPLATES MODAL -->
-<div id="templatesModal" class="modal" hidden>
-  <div class="modal-box">
-    <h2>✨ Templates</h2>
-    <p class="hint">Click a template to really apply its filters, text style and colors to your current media.</p>
-    <h3>Video templates</h3><div id="videoTemplates" class="fx-grid"></div>
-    <h3 style="margin-top:12px">Photo templates</h3><div id="photoTemplates" class="fx-grid"></div>
-    <div class="row"><button id="btnCloseTemplates" class="mini">Close</button></div>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div id="settingsModal" class="modal" hidden>
-  <div class="modal-box">
-    <h2>⚙️ Settings</h2>
-    <label><input type="checkbox" id="setAutosave" checked> Auto-save project (every 10s when changed)</label><br>
-    <label>Default export resolution <select id="setDefRes" class="fld"><option value="720">720p</option><option value="1080" selected>1080p</option><option value="2160">4K</option></select></label>
-    <label>Default FPS <select id="setDefFps" class="fld"><option>24</option><option selected>30</option><option>60</option></select></label>
-    <label>Language <select class="fld"><option>English</option></select></label>
-    <div class="row"><button id="btnClearData" class="mini">🗑 Clear all saved data</button><button id="btnCloseSettings" class="mini">Close</button></div>
-    <h3 style="margin-top:14px">About</h3>
-    <p class="hint">Editora Pro — free, ad-free, no watermark, no login, no AI. HTML/CSS/Vanilla JS. Media is processed on your device; projects save locally (IndexedDB, localStorage fallback).</p>
+    </div>
   </div>
 </div>
 
 <!-- SHORTCUTS MODAL -->
 <div id="shortcutsModal" class="modal" hidden>
   <div class="modal-box">
-    <h2>⌨ Keyboard Shortcuts</h2>
-    <p class="hint">Space — Play / Pause &nbsp;·&nbsp; S — Split clip at playhead &nbsp;·&nbsp; Delete — Delete selected clip<br>← / → — Step one frame &nbsp;·&nbsp; Ctrl+Z — Undo &nbsp;·&nbsp; Ctrl+Y — Redo<br>Right-click a timeline clip for Copy / Cut / Split / Separate audio / Replace and more.</p>
+    <h2><span class="ico" data-ic="keyboard" data-ic-size="20"></span> Keyboard Shortcuts</h2>
+    <p class="hint">Space — Play / Pause &nbsp;·&nbsp; S — Split clip at playhead &nbsp;·&nbsp; M — Add marker at playhead &nbsp;·&nbsp; Delete — Delete selected clip<br>← / → — Step one frame &nbsp;·&nbsp; Ctrl+Z — Undo &nbsp;·&nbsp; Ctrl+Y — Redo &nbsp;·&nbsp; Esc — Close dialog / menu<br>Right-click a timeline clip for Copy / Cut / Split / Separate audio / Replace and more.<br>Every action above also has a button you can tap — shortcuts are never the only way.</p>
     <div class="row"><button id="btnCloseShortcuts" class="mini">Close</button></div>
   </div>
 </div>
 
-<!-- TRANSCRIPT MODAL -->
-<div id="transcriptModal" class="modal" hidden>
-  <div class="modal-box">
-    <h2>💬 Transcript — Captions</h2>
-    <div id="transcriptList"></div>
-    <div class="row"><button id="btnCloseTranscript" class="mini">Close</button></div>
-  </div>
-</div>
-
 <div id="toast"></div>
+<script src="icons.js"></script>
+<script src="modules/history.js"></script>
+<script src="modules/project-store.js"></script>
+<script src="modules/tokens.js"></script>
+<script src="capacitor-bridge.js"></script>
 <script src="app.js"></script>
-<script src="photo.js"></script>
 </body>
 </html>
