@@ -1544,3 +1544,113 @@ webm-muxer + FFmpeg wrapper JS + icons + modules PRESENT. NOT deployed.
    (sample.png)".
 5. **Photo Recent Projects:** after a save, the autosave must appear
    exactly ONCE (no duplicate with the same timestamp).
+
+## APK build — v1.0.0 (2026-11-12, ~06:41–06:45 IST)
+
+The Android APK is built, verified, signed, and hosted. This is the product
+(user order: "Browser ke liye mat banana, app ke liye banao, sab app ke andar ho").
+
+### What was built
+- **App:** Editora Pro v1.0.0, package `ai.editorapro.app`, versionCode 1,
+  versionName 1.0.0, minSdk 24 (Android 7.0+), targetSdk 36.
+- **File:** `app-release.apk`, **13,788,787 bytes (~13 MB)**, signed release.
+- **Download:** https://editora-pro.pages.dev/editora-pro.apk
+  (verified live: HTTP 200, content-length 13,788,787 = local file byte-for-byte,
+  content-type `application/vnd.android.package-archive`).
+  Landing page Download button now points at `/editora-pro.apk`.
+- **Source:** repo `somya2005-Aje/editora-pro`, commit `213660f`
+  (branch `main`); workflow `.github/workflows/build-apk.yml`,
+  GitHub Actions run **43169955854 — GREEN** (all steps pass).
+
+### How it is built (repeatable)
+- Capacitor 8.6.0 wrapper (`android-app/`, appId `ai.editorapro.app`,
+  webDir `www`). `prepare-www.sh` copies `final-deploy/` → `www/`; the APK
+  opens the editor directly (root `index.html` redirects to `app/index.html`).
+- GitHub Actions (free tier): Node 22, JDK 21, Android SDK
+  (platform-tools + platforms;android-36 + build-tools;36.0.0),
+  `npm ci` → restore keystore from repo secrets → `prepare-www.sh` →
+  `npx cap sync android` → `./gradlew assembleRelease` → in-CI verification
+  (aapt + apksigner) → upload artifact `editora-pro-apk` (90-day retention).
+- Local Gradle build is impossible here (runtime blocks loopback TCP);
+  GitHub Actions does the build, same pattern as VoiceWorld AI.
+- Signing: release keystore `keystore/editora-pro-release.keystore`
+  (alias `editora`, PKCS12, RSA 2048, 25 years), **never committed**
+  (`.gitignore`); repo secrets `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`,
+  `KEY_ALIAS` were verified missing on 2026-11-12 and set from the local
+  keystore (key password == store password for PKCS12). If the keystore is
+  lost, a new one means a NEW app identity (old installs cannot update).
+
+### Verification evidence (all checked 2026-11-12)
+- In-CI (workflow step "Verify APK"): `aapt dump badging` →
+  `package: name='ai.editorapro.app' versionCode='1' versionName='1.0.0'`,
+  `application-label:'Editora Pro'`,
+  `launchable-activity: name='ai.editorapro.app.MainActivity'`;
+  `apksigner verify --verbose` → **"Verifies", v2 scheme: true**
+  (v1: false — fine, minSdk 24 supports v2).
+- Local (downloaded artifact): `file` → "Android package (APK)";
+  binary-manifest strings confirm `ai.editorapro.app`, `1.0.0`,
+  `MainActivity`; APK Signing Block (`APK Sig Block 42`) present.
+- Bundled content (from `unzip -l`): `assets/public/app/vendor/
+  ffmpeg-core.wasm` (32,232,419 bytes) with **sha256 identical to the
+  source wasm** — FFmpeg is bundled and works OFFLINE in the app (the web
+  deploy excludes only the wasm because of the 25 MB Pages limit; the APK
+  has no such limit). `assets/public/app/capacitor-bridge.js` present.
+  `assets/capacitor.plugins.json` lists `@capacitor/filesystem` and
+  `@capacitor/share` (native plugins registered).
+- `node --check` PASS on `capacitor-bridge.js`, `app.js`, `photo.js`;
+  `npx cap sync android` clean (2 plugins found).
+
+### Native plugins — what v1 needs and why (minimal, no Firebase/ads/analytics/AI)
+- `@capacitor/filesystem` 8.1.5 + `@capacitor/share` 8.0.3.
+- Problem they solve: a plain `<a download>` click saves NOTHING from
+  inside an Android WebView, and `navigator.share({files})` reports
+  "not supported" there — without them, exports made in the app would go
+  nowhere.
+- `app/capacitor-bridge.js` (new, 6.5 KB; loaded by `app/index.html` and
+  `app/photo.html` before `app.js`/`photo.js`; **no-op on the website** —
+  it only activates when `window.Capacitor` exists):
+  routes every in-app download through Filesystem.writeFile (app Cache
+  dir, no storage permission needed) + Share.share (Android share sheet:
+  "Save to Files", Drive, WhatsApp, gallery apps, …). Covers real taps on
+  the rendered "Download your video" link (capture-phase click listener),
+  programmatic `a.click()` downloads — video/photo exports, project
+  backups, `downloadText()` — (HTMLAnchorElement.prototype.click patch;
+  a detached anchor's click never reaches the document, so both hooks are
+  needed), and patches `navigator.share`/`navigator.canShare` so the app's
+  existing Share button (`shareLastExport`, `shareSiteLink`) opens the
+  native share sheet instead of toasting "not supported".
+- Gallery import: NO extra plugin needed. The app's hidden `<input
+  type="file" accept="video/*,image/*,audio/*">` (and photo's image inputs)
+  open the device picker through Capacitor's WebView file-chooser support
+  (BridgeWebChromeClient `onShowFileChooser` → system picker). This is the
+  documented Capacitor behaviour; it has NOT been exercised on a real phone
+  yet — first phone test must import a real photo/video from the gallery.
+- `app.js`/`photo.js` themselves were NOT changed for the APK; only the
+  bridge file was added and one `<script>` tag each in `index.html` /
+  `photo.html`.
+
+### Install (sideload)
+1. On the phone, open https://editora-pro.pages.dev/ and tap
+   "Download APK — v1.0.0 (13 MB)".
+2. When asked, allow "Install unknown apps" for the browser. No sign-in,
+   no account, no payment — ever.
+3. Open Editora Pro — it opens straight into the editor (no landing page
+   inside the app). All processing is on-device; FFmpeg export works offline.
+
+### Known limits (honest)
+- Exports are saved via the Android share sheet (Cache dir + Share plugin),
+  NOT straight into the Gallery/Downloads folder — the user picks where the
+  file goes on every export. That is the v1 behaviour by design (no storage
+  permission, no MediaStore code).
+- Large exports go through a base64 round-trip in memory (Filesystem
+  writeFile takes base64); a very large video export can use ~1.3× its size
+  in RAM while saving. Typical phone exports (tens of MB) are fine.
+- Canvas (WebCodecs) export audio/video encoding depends on the device's
+  own media encoders; FFmpeg export is the reliable path in-app and is
+  offline via the bundled wasm.
+- Gallery import via the WebView file chooser and the bridge's save+share
+  flow are verified in code + build only — NOT yet exercised on a real
+  phone. The first phone pass must: import a gallery video → edit → export
+  via Download (share sheet appears, file saves) → export via Share button
+  → photo import → photo PNG export. Nothing here is claimed "verified on
+  phone" until that pass happens.
