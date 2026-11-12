@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editora Pro — Free All-in-One Video &amp; Photo Editor (No Ads, No Watermark, No AI)</title>
+<meta name="description" content="Editora Pro is a completely free, ad-free video and photo editor. Timeline, color grading, captions, audio, layers, 4K export — no watermark, no login, no AI. Runs in your browser.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<style>
+:root{--bg:#0b1026;--bg2:#111737;--card:#161d42;--line:#26305e;--txt:#eef1ff;--mut:#a7b0d6;--acc:#7c3aed;--acc2:#2563eb;--cy:#06b6d4;--grn:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:20;background:rgba(11,16,38,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:14px;padding:14px 0}
+.nav img{width:40px;height:40px;border-radius:10px}
+.nav b{font-size:20px;letter-spacing:.3px}
+.nav b span{background:linear-gradient(90deg,#a78bfa,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav .sp{flex:1}
+.nav a.lnk{color:var(--mut);font-size:14px;margin-left:18px}
+.nav a.lnk:hover{color:#fff}
+.btn{display:inline-block;background:linear-gradient(90deg,var(--acc),var(--acc2));color:#fff;padding:12px 26px;border-radius:12px;font-weight:700;border:0;cursor:pointer;font-size:15px}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.big{padding:15px 32px;font-size:17px}
+.hero{padding:72px 0 50px;text-align:center}
+.hero .pill{display:inline-block;border:1px solid var(--line);background:var(--bg2);border-radius:99px;padding:6px 16px;font-size:13px;color:var(--mut);margin-bottom:20px}
+.hero .pill b{color:var(--grn)}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.12;letter-spacing:-1px}
+.hero h1 span{background:linear-gradient(90deg,#a78bfa,#38bdf8,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);max-width:680px;margin:18px auto 28px;font-size:18px}
+.hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero .note{margin-top:14px;font-size:13px;color:var(--mut)}
+/* CSS mockup of the editor */
+.mock{margin:48px auto 0;max-width:960px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0d1330;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:left}
+.mock .bar{display:flex;gap:8px;align-items:center;padding:10px 14px;background:#141b3d;border-bottom:1px solid var(--line)}
+.mock .dot{width:11px;height:11px;border-radius:50%}
+.mock .bar span{font-size:12px;color:var(--mut);margin-left:8px}
+.mock .screen{display:grid;grid-template-columns:150px 1fr 170px;min-height:300px}
+.mock .side{background:#10163a;padding:12px;font-size:11px;color:var(--mut)}
+.mock .side div{padding:7px 9px;border-radius:8px;margin-bottom:5px;background:#182052}
+.mock .side div.on{background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff}
+.mock .stage{padding:16px;display:flex;flex-direction:column;gap:10px}
+.mock .canvas{flex:1;border-radius:10px;background:linear-gradient(135deg,#7c3aed 0%,#2563eb 45%,#06b6d4 100%);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.4);min-height:170px}
+.mock .tl{height:64px;border-radius:10px;background:#10163a;padding:8px;display:flex;gap:6px;align-items:center}
+.mock .tl i{display:block;height:100%;border-radius:6px}
+.mock .props{background:#10163a;padding:12px;font-size:11px;color:var(--mut)}
+.mock .props b{color:#fff;display:block;margin-bottom:8px;font-size:12px}
+.mock .props label{display:block;margin:7px 0 2px}
+.mock .props input{width:100%;accent-color:#7c3aed}
+section{padding:56px 0}
+h2{font-size:clamp(26px,4vw,36px);text-align:center;letter-spacing:-.5px}
+.sub{text-align:center;color:var(--mut);max-width:640px;margin:10px auto 34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.card .ic{font-size:28px}
+.card h3{margin:10px 0 6px;font-size:17px}
+.card p{color:var(--mut);font-size:14px}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.badge{border:1px solid var(--line);background:var(--bg2);border-radius:99px;padding:8px 16px;font-size:13px}
+.badge b{color:var(--grn)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.step b{font-size:15px}
+.step p{color:var(--mut);font-size:14px;margin-top:6px}
+.step .n{width:34px;height:34px;border-radius:50%;background:linear-gradient(90deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:16px;overflow:hidden}
+th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+th{background:#182052}
+td:last-child,th:last-child{text-align:center}
+.yes{color:var(--grn);font-weight:700}.no{color:#f87171}
+.faq{max-width:760px;margin:0 auto}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:10px}
+.faq summary{cursor:pointer;font-weight:700}
+.faq p{color:var(--mut);font-size:14px;margin-top:8px}
+.apk{background:linear-gradient(135deg,#1e1b4b,#0f2a5c);border:1px solid var(--line);border-radius:20px;padding:36px;text-align:center}
+.apk p{color:var(--mut);max-width:620px;margin:10px auto 20px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--mut);font-size:13px;text-align:center}
+@media(max-width:700px){.mock .screen{grid-template-columns:1fr}.mock .side,.mock .props{display:none}.nav a.lnk{display:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <img src="assets/logo.svg" alt="Editora Pro logo"><b>Editora <span>Pro</span></b>
+  <div class="sp"></div>
+  <a class="lnk" href="#features">Features</a><a class="lnk" href="#compare">Compare</a><a class="lnk" href="#faq">FAQ</a>
+  <a class="btn" href="app/">Open App &rarr;</a>
+</div></header>
+
+<main>
+<div class="wrap hero">
+  <div class="pill"><b>100% FREE</b> &nbsp;·&nbsp; No Ads &nbsp;·&nbsp; No Watermark &nbsp;·&nbsp; No Login &nbsp;·&nbsp; No AI</div>
+  <h1>One studio for <span>video &amp; photo editing.</span><br>Free forever.</h1>
+  <p>Editora Pro is a professional all-in-one editor in your browser — multi-track timeline, color grading, captions, audio tools, layers, brushes and 4K export. Everything unlocked. Nothing to pay, nothing to install, no account needed.</p>
+  <div class="cta">
+    <a class="btn big" href="app/">Open the Editor &rarr;</a>
+    <a class="btn ghost big" href="#features">See all features</a>
+  </div>
+  <div class="note">Works on desktop &amp; mobile &middot; Your files never leave your device &middot; Projects auto-save locally</div>
+
+  <div class="mock" aria-label="Editor preview mockup">
+    <div class="bar"><i class="dot" style="background:#f87171"></i><i class="dot" style="background:#fbbf24"></i><i class="dot" style="background:#22c55e"></i><span>Editora Pro — My Travel Vlog.ep</span></div>
+    <div class="screen">
+      <div class="side"><div class="on">&#127916; Media</div><div>&#9998; Text</div><div>&#127926; Audio</div><div>&#10024; Effects</div><div>&#127912; Color</div><div>&#128247; Photo</div></div>
+      <div class="stage">
+        <div class="canvas">&#9654; Your video here</div>
+        <div class="tl"><i style="width:34%;background:#7c3aed"></i><i style="width:22%;background:#2563eb"></i><i style="width:18%;background:#06b6d4"></i><i style="width:14%;background:#a78bfa"></i></div>
+      </div>
+      <div class="props"><b>Color Grading</b><label>Brightness</label><input type="range" value="60"><label>Contrast</label><input type="range" value="70"><label>Saturation</label><input type="range" value="55"><label>Temperature</label><input type="range" value="45"></div>
+    </div>
+  </div>
+</div>
+
+<section id="features"><div class="wrap">
+  <h2>Everything a pro editor needs. Nothing locked.</h2>
+  <p class="sub">Built from the Editora Pro master spec — every tool below is free and works in the app today.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">&#127916;</div><h3>Video Editor</h3><p>Trim, split, crop, rotate, flip, speed 0.25&times;&ndash;2&times;, reverse preview, freeze frame, duplicate &amp; merge clips — frame by frame.</p></div>
+    <div class="card"><div class="ic">&#128207;</div><h3>Multi-Track Timeline</h3><p>Video, text and audio tracks. Click to seek, drag clips, zoom, snap to playhead, lock tracks, keyframes for position, scale &amp; opacity.</p></div>
+    <div class="card"><div class="ic">&#127912;</div><h3>Color Grading</h3><p>Brightness, contrast, saturation, exposure, temperature, tint, highlights &amp; shadows — plus 7 real presets and your own saved presets.</p></div>
+    <div class="card"><div class="ic">&#10024;</div><h3>Effects &amp; Transitions</h3><p>Blur, glow, glitch, vignette, film grain, RGB split and more. Fade, dissolve, slide, wipe, zoom &amp; blur transitions with duration control.</p></div>
+    <div class="card"><div class="ic">&#128172;</div><h3>Captions &amp; Text</h3><p>Animated text overlays, manual subtitles with timing, karaoke word highlight, SRT import and SRT/VTT export.</p></div>
+    <div class="card"><div class="ic">&#127926;</div><h3>Audio Tools</h3><p>Import music, volume, fade in/out, mute, waveform view, voice recording with your mic, and a separate audio track in sync.</p></div>
+    <div class="card"><div class="ic">&#128247;</div><h3>Photo Editor</h3><p>Crop, resize, rotate, straighten, 10+ filters, layers with blend modes, brush, eraser, paint bucket, eyedropper, shapes &amp; stickers.</p></div>
+    <div class="card"><div class="ic">&#128193;</div><h3>Layers &amp; Design</h3><p>Text, shape, sticker and image layers — reorder, opacity, blend mode, hide, lock, duplicate. Poster &amp; thumbnail presets (YouTube, Instagram).</p></div>
+    <div class="card"><div class="ic">&#128190;</div><h3>Projects &amp; Library</h3><p>Auto-save to your device (IndexedDB), rename, duplicate, backup as JSON, recover after a crash. Media library with search &amp; favorites.</p></div>
+    <div class="card"><div class="ic">&#128640;</div><h3>Export — No Watermark</h3><p>Video 480p / 720p / 1080p / 2K / 4K, 24&ndash;60 FPS, WebM/MP4, bitrate control, progress &amp; cancel. Photos JPG/PNG/WebP with quality control.</p></div>
+    <div class="card"><div class="ic">&#128274;</div><h3>Private by Design</h3><p>No account, no login, no tracking, no ads. Your media is processed on your own device and never uploaded anywhere.</p></div>
+    <div class="card"><div class="ic">&#128187;</div><h3>Templates</h3><p>6 video templates (Cinematic, Vlog, Promo, Reels, Tutorial, Wedding) and 6 photo templates (Thumbnail, Poster, Quote, Sale, Story, Profile) — one click applies the real look.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Start editing in 3 steps</h2>
+  <p class="sub">No download, no sign-up, no card.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><b>Open the app</b><p>Tap “Open the Editor”. It loads instantly in any modern browser.</p></div>
+    <div class="step"><div class="n">2</div><b>Import your media</b><p>Drag &amp; drop videos, photos or audio — or pick files from your device.</p></div>
+    <div class="step"><div class="n">3</div><b>Edit &amp; export</b><p>Cut on the timeline, grade the color, add captions — export in up to 4K, watermark-free.</p></div>
+  </div>
+</div></section>
+
+<section id="compare"><div class="wrap">
+  <h2>Editora Pro vs the others</h2>
+  <p class="sub">The things other editors charge for — or stamp on your video — are free here.</p>
+  <table>
+    <tr><th></th><th>Editora Pro</th><th>Typical free editors</th></tr>
+    <tr><td>Price</td><td class="yes">Free — all tools</td><td>Free tier, then paywall</td></tr>
+    <tr><td>Watermark on export</td><td class="yes">Never</td><td class="no">Often, unless paid</td></tr>
+    <tr><td>Advertisements</td><td class="yes">Zero ads</td><td class="no">Ads in app &amp; export</td></tr>
+    <tr><td>Login / account required</td><td class="yes">No login</td><td class="no">Usually required</td></tr>
+    <tr><td>AI assistant / generative AI</td><td class="yes">None — by design</td><td>Varies</td></tr>
+    <tr><td>Export up to 4K</td><td class="yes">Yes*</td><td class="no">Often paywalled</td></tr>
+    <tr><td>Your files uploaded to a server?</td><td class="yes">No — processed on device</td><td class="no">Often uploaded</td></tr>
+  </table>
+  <p style="text-align:center;color:var(--mut);font-size:13px;margin-top:12px">* 4K export renders at the maximum canvas size your device/browser supports; on low-end devices it falls back gracefully with an honest notice.</p>
+</div></section>
+
+<section><div class="wrap"><div class="apk">
+  <h2>Android APK — coming after web verification</h2>
+  <p>The web app is live now and fully usable. The Android APK (same editor, packaged for your phone) will be published here only after the web version is verified working — we will not ship a fake download link. Check back soon, or use “Open the Editor” on your phone today: it works in the mobile browser too.</p>
+  <a class="btn big" href="app/">Use the Web App Now &rarr;</a>
+</div></div></section>
+
+<section id="faq"><div class="wrap">
+  <h2>Frequently asked questions</h2>
+  <p class="sub"></p>
+  <div class="faq">
+    <details><summary>Is Editora Pro really free?</summary><p>Yes. Every tool is free, there are no premium locks, no subscriptions and no ads. Hosting is on Cloudflare Pages (free tier).</p></details>
+    <details><summary>Will my exported videos have a watermark?</summary><p>No. Exports never add a watermark — video or photo.</p></details>
+    <details><summary>Do I need an account or login?</summary><p>No. There is no login at all. Projects save locally on your device.</p></details>
+    <details><summary>Does it use AI?</summary><p>No. Editora Pro has no AI assistant, no generative AI and no AI effects, by design. Captions are manual or imported from SRT/VTT files.</p></details>
+    <details><summary>Where do my files go?</summary><p>Nowhere. Editing happens in your browser on your device. Files are never uploaded to a server.</p></details>
+    <details><summary>Which formats can I import and export?</summary><p>Import: MP4, WebM, MOV, JPG, PNG, WebP, BMP, GIF, MP3, WAV, AAC, M4A, OGG. Export: video WebM/MP4 up to 4K at 24–60 FPS; photos JPG/PNG/WebP.</p></details>
+    <details><summary>Why does 4K say “depends on device”?</summary><p>Browser video export renders through a canvas, and the maximum canvas size depends on your device and browser. Editora Pro renders at the highest size your device supports and tells you honestly what it used.</p></details>
+  </div>
+</div></section>
+</main>
+<footer><div class="wrap">
+  <b style="color:#fff">Editora Pro</b> — Free &middot; Ad-Free &middot; No Watermark &middot; No Login &middot; No AI<br>
+  Built with HTML, CSS &amp; Vanilla JavaScript. Hosted on Cloudflare Pages. Your media never leaves your device.
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editora Pro — Editor</title>
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-theme="dark">
+<div id="app">
+  <!-- ============ TOP BAR (CapCut-style) ============ -->
+  <header id="topbar">
+    <a href="../" class="brand"><img src="../assets/logo.svg" alt="logo"><b>Editora <span>Pro</span></b></a>
+    <div class="menu-wrap">
+      <button id="btnMenu" title="Menu">Menu ▾</button>
+      <div id="menuDrop" class="dropdown" hidden>
+        <button data-m="new">＋ New Project</button>
+        <button data-m="projects">📁 Open Projects</button>
+        <button data-m="save">💾 Save Project</button>
+        <button data-m="templates">✨ Templates</button>
+        <button data-m="settings">⚙️ Settings</button>
+        <button data-m="about">ℹ️ About Editora Pro</button>
+      </div>
+    </div>
+    <input id="projectName" value="Untitled Project" title="Project name (click to rename)" spellcheck="false">
+    <span id="autosaveText" class="autosave" title="Projects auto-save locally">● Auto saved —</span>
+    <div class="sp"></div>
+    <button id="btnShortcuts" title="Keyboard shortcuts">⌨ Shortcuts</button>
+    <span class="free-badge" title="Editora Pro is 100% free — no ads, no watermark, no paid plans">FREE • No Watermark</span>
+    <button id="btnProjects" title="Projects">📁 Projects</button>
+    <button id="btnTemplates" title="Templates">✨ Templates</button>
+    <button id="btnSettings" title="Settings">⚙️ Settings</button>
+    <button id="btnTheme" title="Toggle dark / light theme">🌙</button>
+    <button id="btnShare" class="share-btn" title="Share">↗ Share</button>
+    <button id="btnExport" class="export-btn">⬇ Export</button>
+  </header>
+
+  <!-- ============ TOP TOOLBAR (CapCut icon row) ============ -->
+  <nav id="toolbar">
+    <button class="toolbtn on" data-tab="media" title="Import media from your device">📥<span>Import</span></button>
+    <button class="toolbtn" data-tab="audio" title="Audio tools">🎵<span>Audio</span></button>
+    <button class="toolbtn" data-tab="text" title="Add text overlays">✏️<span>Text</span></button>
+    <button class="toolbtn" data-tab="stickers" title="Stickers">😀<span>Stickers</span></button>
+    <button class="toolbtn" data-tab="effects" title="Video effects">✨<span>Effects</span></button>
+    <button class="toolbtn" data-tab="trans" title="Transitions between clips">🔀<span>Transitions</span></button>
+    <button class="toolbtn" data-tab="captions" title="Subtitles and captions">💬<span>Captions</span></button>
+    <button class="toolbtn" data-tab="filters" title="Filters and color presets">🎨<span>Filters</span></button>
+    <button class="toolbtn" data-tab="photo" title="Photo editor">🖼️<span>Photo</span></button>
+    <span class="tb-sep"></span>
+    <div class="modes">
+      <button id="modeVideo" class="mode on">🎬 Video Editor</button>
+      <button id="modePhoto" class="mode">🖼️ Photo Editor</button>
+    </div>
+  </nav>
+
+  <!-- ============ MAIN ROW ============ -->
+  <div id="mainRow">
+    <!-- LEFT PANEL -->
+    <aside id="sidebar">
+      <!-- MEDIA / GALLERY -->
+      <div class="panel on" id="tab-media">
+        <div class="lib-nav">
+          <button class="lib-nav-item on" data-lib="device">▸ Device</button>
+          <button class="lib-nav-item" data-lib="media">Media</button>
+          <button class="lib-nav-item" data-lib="presets">Your presets</button>
+        </div>
+        <input id="mediaSearch" placeholder="🔍 Search media…" class="fld">
+        <div class="row"><button id="btnImport" class="btn import-big">＋ Import</button></div>
+        <div class="drop" id="dropZone">📥 Drop files here<br><span>video, photo or audio — from your device gallery</span></div>
+        <input type="file" id="fileInput" accept="video/*,image/*,audio/*" multiple hidden>
+        <div class="row filter-row">
+          <button id="btnFilterAll" class="mini on">All</button>
+          <button id="btnFilterAdded" class="mini">Added</button>
+          <button id="btnFavFilter" class="mini">★ Favorites only</button>
+          <button id="btnSortName" class="mini">Sort: Name</button>
+        </div>
+        <div id="mediaList" class="media-list"><p class="hint">No media yet. Import a video or photo from your device to begin — click a thumbnail to preview it, or press “+ Timeline” to add it to the timeline.</p></div>
+      </div>
+
+      <!-- TEXT -->
+      <div class="panel" id="tab-text">
+        <h3>Text Overlay</h3>
+        <input id="txtContent" class="fld" placeholder="Type your text…" value="Hello Editora!">
+        <div class="row"><button id="btnAddText" class="mini wide">+ Add Text to Timeline</button></div>
+        <label>Font <select id="txtFont" class="fld"><option>Arial</option><option>Georgia</option><option>Verdana</option><option>Trebuchet MS</option><option>Courier New</option><option>Impact</option><option>Comic Sans MS</option></select></label>
+        <label>Size <input type="range" id="txtSize" min="16" max="120" value="48"><span id="txtSizeV">48px</span></label>
+        <label>Color <input type="color" id="txtColor" value="#ffffff"></label>
+        <label>Background <input type="color" id="txtBg" value="#000000"> <input type="checkbox" id="txtBgOn"> show</label>
+        <label>Outline <input type="checkbox" id="txtOutline" checked></label>
+        <label>Shadow <input type="checkbox" id="txtShadow" checked></label>
+        <label>Position <select id="txtPos" class="fld"><option value="bottom">Bottom</option><option value="top">Top</option><option value="center">Center</option></select></label>
+        <label>Start (s) <input type="number" id="txtStart" class="fld" value="0" min="0" step="0.1"></label>
+        <label>Duration (s) <input type="number" id="txtDur" class="fld" value="3" min="0.5" step="0.1"></label>
+        <p class="hint">Text animation (fade / slide / pop) lives in the right panel → Animation tab.</p>
+      </div>
+
+      <!-- STICKERS -->
+      <div class="panel" id="tab-stickers">
+        <h3>Stickers</h3>
+        <p class="hint">Click a sticker — in Video mode it adds an emoji text clip to the timeline; in Photo mode it adds a sticker layer to your photo.</p>
+        <div id="stickerGrid" class="sticker-grid"></div>
+      </div>
+
+      <!-- EFFECTS -->
+      <div class="panel" id="tab-effects">
+        <h3>Effects (click to toggle)</h3>
+        <div id="fxList" class="fx-grid"></div>
+        <label>Effect strength <input type="range" id="fxStrength" min="0" max="100" value="60"><span id="fxStrengthV">60%</span></label>
+        <h3 style="margin-top:12px">Transform</h3>
+        <div class="row">
+          <button id="btnRot90" class="mini">⟳ 90°</button><button id="btnRot180" class="mini">180°</button><button id="btnRot270" class="mini">⟲ 270°</button>
+          <button id="btnFlipH" class="mini">⇄ Flip H</button><button id="btnFlipV" class="mini">⇅ Flip V</button>
+        </div>
+        <label>Crop ratio <select id="cropRatio" class="fld"><option value="free">Free</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></label>
+        <label>Crop zoom <input type="range" id="cropZoom" min="25" max="200" value="100"><span id="cropZoomV">100%</span></label>
+        <div class="row"><button id="btnFreeze" class="mini">❄ Freeze frame</button><button id="btnReverse" class="mini">⏪ Reverse preview</button></div>
+        <p class="hint">Reverse: preview plays backwards. Export renders forward (true reverse export needs re-encoding; labelled honestly in Export).</p>
+      </div>
+
+      <!-- TRANSITIONS -->
+      <div class="panel" id="tab-trans">
+        <h3>Transition (between clips)</h3>
+        <select id="transType" class="fld">
+          <option value="none">None</option><option value="fade">Fade</option><option value="dissolve">Dissolve / Crossfade</option><option value="slide">Slide</option><option value="wipe">Wipe</option><option value="zoom">Zoom</option><option value="blur">Blur</option><option value="flash">Flash</option><option value="spin">Spin</option>
+        </select>
+        <label>Duration (s) <input type="range" id="transDur" min="0.2" max="2" step="0.1" value="0.5"><span id="transDurV">0.5s</span></label>
+        <div class="row"><button id="btnApplyTrans" class="mini wide">Apply to selected clip</button></div>
+        <p class="hint">Select a clip on the timeline first, then apply. Applied as fade-in/out on the selected clip in preview and in export.</p>
+      </div>
+
+      <!-- CAPTIONS -->
+      <div class="panel" id="tab-captions">
+        <h3>Subtitles / Captions</h3>
+        <div class="row"><button id="btnAddCap" class="mini">+ Add Caption</button><button id="btnImportSRT" class="mini">Import SRT</button><button id="btnExportSRT" class="mini">Export SRT</button><button id="btnExportVTT" class="mini">Export VTT</button></div>
+        <input type="file" id="srtInput" accept=".srt,.vtt" hidden>
+        <label><input type="checkbox" id="karaokeToggle"> Karaoke word highlight</label>
+        <div id="capList"></div>
+        <p class="hint">Note: no automatic speech-to-text — captions are manual or imported from SRT/VTT (the spec allows auto-captions only via an offline engine; none is bundled, so manual + SRT is the honest path).</p>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="panel" id="tab-filters">
+        <h3>Video color presets</h3>
+        <div id="filterPresets" class="fx-grid"></div>
+        <p class="hint">Tap a preset to apply its colors to the video preview and export. Fine-tune in the right panel → Adjustment tab.</p>
+        <h3 style="margin-top:12px">Photo filters</h3>
+        <div id="photoFilters" class="fx-grid"></div>
+        <p class="hint">Photo filters apply to the photo canvas when Photo mode is active.</p>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="panel" id="tab-photo">
+        <h3>Photo Tools</h3>
+        <div class="row"><button id="btnImportPhoto" class="mini">+ Open Image</button><button id="btnPhotoPreset" class="mini">Poster / Thumbnail sizes</button></div>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <label>Tool <select id="photoTool" class="fld"><option value="select">Select / Move layer</option><option value="brush">Brush</option><option value="eraser">Eraser</option><option value="picker">Color picker</option><option value="bucket">Paint bucket</option><option value="crop">Crop (drag on canvas)</option><option value="rectsel">Rect select → crop</option></select></label>
+        <label>Brush size <input type="range" id="brushSize" min="2" max="80" value="12"><span id="brushSizeV">12px</span></label>
+        <label>Brush color <input type="color" id="brushColor" value="#ff3366"></label>
+        <label>Brush opacity <input type="range" id="brushOp" min="10" max="100" value="100"><span id="brushOpV">100%</span></label>
+        <label>Straighten (°) <input type="range" id="straighten" min="-15" max="15" value="0"><span id="straightenV">0°</span></label>
+        <div class="row"><button id="btnRotL" class="mini">⟲ Rotate -90°</button><button id="btnRotR" class="mini">⟳ Rotate +90°</button><button id="btnFlipPhotoH" class="mini">⇄ Flip</button></div>
+        <label>Canvas size <select id="photoSize" class="fld"><option value="orig">Original</option><option value="1280x720">YouTube thumbnail 1280×720</option><option value="1080x1080">Instagram post 1080×1080</option><option value="1080x1920">Story / Reel 1080×1920</option><option value="1200x628">Facebook post 1200×628</option></select></label>
+        <h3 style="margin-top:12px">Layers</h3>
+        <div class="row">
+          <button id="btnAddTxtLayer" class="mini">+ Text</button><button id="btnAddShape" class="mini">+ Shape</button><button id="btnAddSticker" class="mini">+ Sticker</button><button id="btnAddImgLayer" class="mini">+ Image</button>
+        </div>
+        <input type="file" id="layerImgInput" accept="image/*" hidden>
+        <div id="layerList"></div>
+        <label>Selected layer opacity <input type="range" id="layerOp" min="0" max="100" value="100"><span id="layerOpV">100%</span></label>
+        <label>Blend mode <select id="layerBlend" class="fld"><option>source-over</option><option>multiply</option><option>screen</option><option>overlay</option><option>darken</option><option>lighten</option><option>color-dodge</option></select></label>
+        <div class="row"><button id="btnLayerUp" class="mini">↑ Up</button><button id="btnLayerDown" class="mini">↓ Down</button><button id="btnLayerDup" class="mini">⧉ Duplicate</button><button id="btnLayerDel" class="mini">🗑 Delete</button></div>
+        <h3 style="margin-top:12px">Photo Adjustments</h3>
+        <div id="photoAdjust"></div>
+        <p class="hint">Photo adjustments apply live to the photo canvas when Photo mode is active.</p>
+      </div>
+    </aside>
+
+    <!-- CENTER : PLAYER -->
+    <main id="center">
+      <div id="playerLabel">Player <span id="playerModeLabel">— Video Editor</span></div>
+      <div id="stageWrap">
+        <div id="videoStage">
+          <video id="previewVideo" playsinline></video>
+          <canvas id="overlayCanvas"></canvas>
+          <div id="textOverlay"></div>
+          <div id="stageEmpty">🎬 Import a video or photo to start editing.<br><span>Gallery (left) → Import, pick a file from your device, then “+ Timeline”.</span></div>
+        </div>
+        <div id="photoStage" hidden>
+          <canvas id="photoCanvas" width="960" height="540"></canvas>
+          <div id="photoHint">Open an image from the Photo panel to start.</div>
+        </div>
+      </div>
+      <div id="transport">
+        <button id="btnPlay" title="Play / Pause (Space)">▶ Play</button>
+        <button id="btnPrevFrame" title="Previous frame">⏮</button>
+        <button id="btnNextFrame" title="Next frame">⏭</button>
+        <span id="timeDisplay">00:00.0 / 00:00.0</span>
+        <label>Vol <input type="range" id="volSlider" min="0" max="100" value="100" style="width:80px"></label>
+        <label>Ratio <select id="ratioSel"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option><option value="4:3">4:3</option></select></label>
+        <button id="btnFull" title="Fullscreen">⛶ Full</button>
+      </div>
+      <div id="trimBar">
+        <label>Trim in <input type="number" id="trimIn" value="0" min="0" step="0.1"> s</label>
+        <input type="range" id="trimInR" min="0" max="100" value="0" step="0.1">
+        <label>Trim out <input type="number" id="trimOut" value="0" min="0" step="0.1"> s</label>
+        <input type="range" id="trimOutR" min="0" max="100" value="0" step="0.1">
+      </div>
+    </main>
+
+    <!-- RIGHT INSPECTOR -->
+    <aside id="inspector">
+      <div class="itabs">
+        <button class="itab on" data-itab="video">Video</button>
+        <button class="itab" data-itab="audio">Audio</button>
+        <button class="itab" data-itab="speed">Speed</button>
+        <button class="itab" data-itab="animation">Animation</button>
+        <button class="itab" data-itab="adjustment">Adjustment</button>
+      </div>
+
+      <!-- VIDEO TAB -->
+      <div class="ipanel on" id="itab-video">
+        <h3>Basic — Transform</h3>
+        <label>Scale <input type="range" id="inspScale" min="25" max="200" value="100"><span id="inspScaleV">100%</span></label>
+        <label><input type="checkbox" id="inspUniform" checked> Uniform scale (X and Y together)</label>
+        <div class="row" id="inspScaleXY" hidden>
+          <label style="flex:1">Scale X % <input type="number" id="inspScaleX" class="fld" value="100" min="25" max="200"></label>
+          <label style="flex:1">Scale Y % <input type="number" id="inspScaleY" class="fld" value="100" min="25" max="200"></label>
+        </div>
+        <label>Position X <input type="number" id="inspPosX" class="fld" value="0" step="5"> px</label>
+        <label>Position Y <input type="number" id="inspPosY" class="fld" value="0" step="5"> px</label>
+        <label>Rotate <input type="range" id="inspRot" min="-180" max="180" value="0"><span id="inspRotV">0°</span></label>
+        <div class="row" id="alignRow">
+          <button class="mini" data-align="left" title="Move left">⇤ Left</button>
+          <button class="mini" data-align="center" title="Center">⊙ Center</button>
+          <button class="mini" data-align="right" title="Move right">⇥ Right</button>
+          <button class="mini" data-align="top" title="Move up">⇧ Top</button>
+          <button class="mini" data-align="middle" title="Middle">— Middle</button>
+          <button class="mini" data-align="bottom" title="Move down">⇩ Bottom</button>
+        </div>
+        <label><input type="checkbox" id="inspBlendOn"> Blend</label>
+        <label>Blend mode <select id="inspBlendMode" class="fld"><option value="normal">Normal</option><option value="screen">Screen</option><option value="multiply">Multiply</option><option value="overlay">Overlay</option><option value="lighten">Lighten</option></select></label>
+        <h3 style="margin-top:14px">Clip details</h3>
+        <p class="hint">Select a clip on the timeline to edit its properties here.</p>
+        <div id="clipProps" hidden>
+          <label>Name <input id="clipName" class="fld"></label>
+          <label>Start (s) <input type="number" id="clipStart" class="fld" step="0.1"></label>
+          <label>Duration (s) <input type="number" id="clipDur" class="fld" step="0.1" min="0.1"></label>
+          <label>Opacity <input type="range" id="clipOpacity" min="0" max="100" value="100"><span id="clipOpacityV">100%</span></label>
+          <label>Scale % <input type="range" id="clipScale" min="25" max="200" value="100"><span id="clipScaleV">100%</span></label>
+          <label>Rotation ° <input type="range" id="clipRot" min="-180" max="180" value="0"><span id="clipRotV">0°</span></label>
+          <div class="row"><button id="btnClipApply" class="mini wide">Apply to clip</button></div>
+        </div>
+      </div>
+
+      <!-- AUDIO TAB -->
+      <div class="ipanel" id="itab-audio">
+        <h3>Audio</h3>
+        <div class="row"><button id="btnImportAudio" class="mini">+ Import Audio</button><button id="btnRecord" class="mini">🎙 Record Voice</button><button id="btnStopRec" class="mini" disabled>■ Stop</button></div>
+        <input type="file" id="audioInput" accept="audio/*" hidden>
+        <label>Music volume <input type="range" id="audVol" min="0" max="100" value="80"><span id="audVolV">80%</span></label>
+        <label>Video volume <input type="range" id="vidVol" min="0" max="100" value="100"><span id="vidVolV">100%</span></label>
+        <label>Fade in (s) <input type="range" id="audFadeIn" min="0" max="5" step="0.5" value="0"><span id="audFadeInV">0s</span></label>
+        <label>Fade out (s) <input type="range" id="audFadeOut" min="0" max="5" step="0.5" value="0"><span id="audFadeOutV">0s</span></label>
+        <div class="row"><button id="btnMute" class="mini">🔇 Mute all</button><button id="btnDuck" class="mini">🦆 Duck music under voice</button></div>
+        <label>Bass <input type="range" id="audBass" min="-12" max="12" value="0"><span id="audBassV">0 dB</span></label>
+        <label>Treble <input type="range" id="audTreble" min="-12" max="12" value="0"><span id="audTrebleV">0 dB</span></label>
+        <label>Playback speed <select id="audSpeed" class="fld"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+        <canvas id="waveCanvas" width="260" height="60" style="width:100%;background:#0d1330;border-radius:8px"></canvas>
+        <p class="hint">Waveform shows the imported audio track. “Extract audio” is the video’s own sound — use Video volume above.</p>
+      </div>
+
+      <!-- SPEED TAB -->
+      <div class="ipanel" id="itab-speed">
+        <h3>Speed</h3>
+        <label>Playback speed <select id="speedSel" class="fld"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+        <label>Selected clip speed <input type="range" id="clipSpeed" min="25" max="200" value="100"><span id="clipSpeedV">1.00×</span></label>
+        <p class="hint">Clip speed changes the selected video clip’s length on the timeline (faster = shorter). Select a video clip first. Preview playback speed is the dropdown above.</p>
+      </div>
+
+      <!-- ANIMATION TAB -->
+      <div class="ipanel" id="itab-animation">
+        <h3>Animation</h3>
+        <label>Text animation <select id="txtAnim" class="fld"><option value="none">None</option><option value="fade">Fade in</option><option value="slide">Slide up</option><option value="pop">Pop</option></select></label>
+        <p class="hint">Applies to text clips you add from the Text panel.</p>
+        <h3 style="margin-top:12px">Keyframes</h3>
+        <div class="row"><button id="btnAddKF" class="mini">+ Keyframe at playhead</button><button id="btnDelKF" class="mini">Delete selected</button></div>
+        <label>Property <select id="kfProp" class="fld"><option value="opacity">Opacity</option><option value="scale">Scale</option><option value="posX">Position X</option><option value="posY">Position Y</option></select></label>
+        <label>Value <input type="range" id="kfVal" min="0" max="200" value="100"><span id="kfValV">100</span></label>
+        <div id="kfList"></div>
+      </div>
+
+      <!-- ADJUSTMENT TAB -->
+      <div class="ipanel" id="itab-adjustment">
+        <h3>Color Grading</h3>
+        <div id="colorSliders"></div>
+        <h3 style="margin-top:12px">Presets</h3>
+        <div id="presetList" class="fx-grid"></div>
+        <div class="row"><button id="btnSavePreset" class="mini">💾 Save custom preset</button><button id="btnResetColor" class="mini">Reset color</button></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ BOTTOM TIMELINE ============ -->
+  <section id="timelineSection">
+    <div id="tlHead">
+      <button id="btnSelectTool" class="mini on" title="Select tool">➤ Select</button>
+      <button id="btnUndo" class="mini" title="Undo (Ctrl+Z)">↩ Undo</button>
+      <button id="btnRedo" class="mini" title="Redo (Ctrl+Y)">↪ Redo</button>
+      <span class="tb-sep"></span>
+      <button id="btnSplit" class="mini" title="Split clip at playhead (S)">✂ Split</button>
+      <button id="btnDupClip" class="mini" title="Duplicate selected clip">⧉ Duplicate</button>
+      <button id="btnDelClip" class="mini" title="Delete selected clip (Del)">🗑 Delete</button>
+      <button id="btnTrimApply" class="mini" title="Apply trim in/out to selected clip">✂ Apply Trim</button>
+      <span class="tb-sep"></span>
+      <button id="btnSnap" class="mini" title="Snap toggle">🧲 Snap: On</button>
+      <label>Zoom <input type="range" id="tlZoom" min="40" max="300" value="100"></label>
+      <button id="btnAddTrack" class="mini">+ Text track clip</button>
+      <span id="tlInfo" class="hint"></span>
+    </div>
+    <div id="timeline">
+      <div class="track-labels">
+        <div class="tlabel">🎬 Video <span><button class="tvis" data-track="video" title="Show/hide track">👁</button><button class="tlk" data-track="video" title="Lock track">🔓</button></span></div>
+        <div class="tlabel">✏️ Text <span><button class="tvis" data-track="text" title="Show/hide track">👁</button><button class="tlk" data-track="text" title="Lock track">🔓</button></span></div>
+        <div class="tlabel">🎵 Audio <span><button class="tvis" data-track="audio" title="Show/hide track">👁</button><button class="tlk" data-track="audio" title="Lock track">🔓</button></span></div>
+        <div class="tlabel" id="tlabelPhoto" hidden>🖼️ Photo <span><button class="tvis" data-track="photo" title="Show/hide track">👁</button></span></div>
+      </div>
+      <div id="tlScroll">
+        <div id="tlRuler"></div>
+        <div id="playhead"></div>
+        <div class="track" id="trackVideo"></div>
+        <div class="track" id="trackText"></div>
+        <div class="track" id="trackAudio"></div>
+        <div class="track" id="trackPhoto" hidden></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- RIGHT-CLICK CONTEXT MENU -->
+<div id="ctxMenu" class="ctx-menu" hidden></div>
+<input type="file" id="replaceInput" accept="video/*,image/*" hidden>
+
+<!-- EXPORT MODAL -->
+<div id="exportModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>⬇ Export Center</h2>
+    <div id="exportVideoOpts">
+      <label>Resolution <select id="expRes" class="fld"><option value="480">480p (854×480)</option><option value="720">720p HD (1280×720)</option><option value="1080" selected>1080p Full HD (1920×1080)</option><option value="1440">2K (2560×1440)</option><option value="2160">4K (3840×2160) *</option></select></label>
+      <label>FPS <select id="expFps" class="fld"><option>24</option><option>25</option><option selected>30</option><option>50</option><option>60</option></select></label>
+      <label>Format <select id="expFmt" class="fld"><option value="webm">WebM (widely supported)</option><option value="mp4">MP4 (if browser supports it, else WebM)</option></select></label>
+      <label>Bitrate <select id="expBitrate" class="fld"><option value="2500000">Low — 2.5 Mbps</option><option value="5000000" selected>Medium — 5 Mbps</option><option value="10000000">High — 10 Mbps</option><option value="20000000">Very high — 20 Mbps</option></select></label>
+      <p class="hint">* 4K/2K render at the maximum canvas size your device/browser supports; if the device cannot do it, export falls back to 1080p and tells you. Reverse is exported forward (see Effects panel). No watermark is ever added.</p>
+    </div>
+    <div id="exportPhotoOpts" hidden>
+      <label>Format <select id="expPhotoFmt" class="fld"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
+      <label>Quality <input type="range" id="expPhotoQ" min="10" max="100" value="92"><span id="expPhotoQV">92%</span></label>
+      <label>Width (px, 0 = current) <input type="number" id="expPhotoW" class="fld" value="0" min="0"></label>
+      <label><input type="checkbox" id="expPhotoTrans"> Transparent background (PNG only — flattens layers onto transparent canvas)</label>
+    </div>
+    <div class="row"><button id="btnDoExport" class="btn">▶ Start Export</button><button id="btnCancelExport" class="mini" disabled>Cancel</button><button id="btnCloseExport" class="mini">Close</button></div>
+    <div id="expProgress" hidden><div id="expBar"><div id="expFill"></div></div><span id="expPct">0%</span><span id="expStatus"></span></div>
+    <div id="expResult"></div>
+  </div>
+</div>
+
+<!-- PROJECTS MODAL -->
+<div id="projectsModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>📁 Projects</h2>
+    <div class="row"><button id="btnNewProject" class="mini">+ New Project</button><button id="btnSaveProject" class="mini">💾 Save Now</button><button id="btnExportProj" class="mini">⬇ Backup (JSON)</button><button id="btnImportProj" class="mini">⬆ Restore (JSON)</button></div>
+    <input type="file" id="projInput" accept=".json" hidden>
+    <div id="projectList"></div>
+    <div class="row"><button id="btnCloseProjects" class="mini">Close</button></div>
+  </div>
+</div>
+
+<!-- TEMPLATES MODAL -->
+<div id="templatesModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>✨ Templates</h2>
+    <p class="hint">Click a template to really apply its filters, text style and colors to your current media.</p>
+    <h3>Video templates</h3><div id="videoTemplates" class="fx-grid"></div>
+    <h3 style="margin-top:12px">Photo templates</h3><div id="photoTemplates" class="fx-grid"></div>
+    <div class="row"><button id="btnCloseTemplates" class="mini">Close</button></div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>⚙️ Settings</h2>
+    <label><input type="checkbox" id="setAutosave" checked> Auto-save project (every 10s when changed)</label><br>
+    <label>Default export resolution <select id="setDefRes" class="fld"><option value="720">720p</option><option value="1080" selected>1080p</option><option value="2160">4K</option></select></label>
+    <label>Default FPS <select id="setDefFps" class="fld"><option>24</option><option selected>30</option><option>60</option></select></label>
+    <label>Language <select class="fld"><option>English</option></select></label>
+    <div class="row"><button id="btnClearData" class="mini">🗑 Clear all saved data</button><button id="btnCloseSettings" class="mini">Close</button></div>
+    <h3 style="margin-top:14px">About</h3>
+    <p class="hint">Editora Pro — free, ad-free, no watermark, no login, no AI. HTML/CSS/Vanilla JS. Media is processed on your device; projects save locally (IndexedDB, localStorage fallback).</p>
+  </div>
+</div>
+
+<!-- SHORTCUTS MODAL -->
+<div id="shortcutsModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>⌨ Keyboard Shortcuts</h2>
+    <p class="hint">Space — Play / Pause &nbsp;·&nbsp; S — Split clip at playhead &nbsp;·&nbsp; Delete — Delete selected clip<br>← / → — Step one frame &nbsp;·&nbsp; Ctrl+Z — Undo &nbsp;·&nbsp; Ctrl+Y — Redo<br>Right-click a timeline clip for Copy / Cut / Split / Separate audio / Replace and more.</p>
+    <div class="row"><button id="btnCloseShortcuts" class="mini">Close</button></div>
+  </div>
+</div>
+
+<!-- TRANSCRIPT MODAL -->
+<div id="transcriptModal" class="modal" hidden>
+  <div class="modal-box">
+    <h2>💬 Transcript — Captions</h2>
+    <div id="transcriptList"></div>
+    <div class="row"><button id="btnCloseTranscript" class="mini">Close</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+<script src="photo.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "editora-pro-android",
+  "version": "1.0.0",
+  "description": "Editora Pro — free all-in-one video & photo editor (Capacitor wrapper, no ads, no AI, no Firebase)",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/cli": "8.6.0",
+    "@capacitor/core": "8.6.0"
+  }
+}

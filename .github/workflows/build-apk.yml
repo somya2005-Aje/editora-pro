@@ -1,0 +1,86 @@
+# Editora Pro — build signed release APK on GitHub Actions (free tier).
+#
+# Runs on every push to main and on manual dispatch (Actions tab -> Run workflow).
+# The APK is uploaded as a build artifact (download from the Actions run page).
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   KEYSTORE_BASE64   — base64 of editora-pro-release.keystore (kept locally in keystore/, NEVER committed)
+#   KEYSTORE_PASSWORD — keystore storePassword
+#   KEY_ALIAS         — keystore keyAlias ("editora")
+#
+# The keystore file and its passwords are NEVER committed (see .gitignore);
+# they are recreated from secrets on each run only.
+# NOTE: keytool stores a PKCS12 private key under the STORE password
+# (a separate -keypass is ignored), so keyPassword must equal
+# storePassword here or signing fails.
+
+name: Build Editora Pro release APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Install JS dependencies
+        run: cd android-app && npm ci
+
+      - name: Restore release keystore
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android-app/android/app/editora-pro-release.keystore
+          cat > android-app/android/key.properties <<EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=editora-pro-release.keystore
+          EOF
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+
+      - name: Prepare web assets (copy final-deploy, open editor directly)
+        run: bash android-app/scripts/prepare-www.sh
+
+      - name: Sync Capacitor
+        run: cd android-app && npx cap sync android
+
+      - name: Build signed release APK
+        run: cd android-app/android && chmod +x gradlew && ./gradlew assembleRelease
+
+      - name: Verify APK (package, version, signature)
+        run: |
+          AAPT="$ANDROID_HOME/build-tools/36.0.0/aapt"
+          APK=android-app/android/app/build/outputs/apk/release/app-release.apk
+          ls -lh "$APK"
+          "$AAPT" dump badging "$APK" | grep -E "package:|application-label:|launchable-activity:"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$APK"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: editora-pro-apk
+          path: android-app/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 90
